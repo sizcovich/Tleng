@@ -66,9 +66,9 @@ class AutomataNoDet(object):
 		
 		self.F = Set(sigma)
 		self.q0 = 'qT'
-		self.Delta = { 'qT' : {}}
+		self.Delta = { 'qT' : {} }
 		for simbolo in self.Sigma:
-			self.Delta['qT'][simbolo] = {}
+			self.Delta['qT'][simbolo] = Set()
 			
 	def setearInicial(self, estado):
 		if not (estado in self.Q):
@@ -83,7 +83,7 @@ class AutomataNoDet(object):
 		self.Q.add(estado)
 		self.Delta[estado] = {}
 		for simbolo in self.Sigma:
-			self.Delta[estado][simbolo] = {}
+			self.Delta[estado][simbolo] = Set()
 			
 	def agregarFinal(self, estado):
 		if not (estado in self.Q):

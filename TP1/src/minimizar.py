@@ -1,4 +1,6 @@
 from automata import AutomataDet
+from sets import Set
+
 def ejemplo():
 	automata = AutomataDet("aso")
 	automata.agregarEstado('q1')
@@ -17,9 +19,20 @@ def ejemplo():
 	automata.setearArista('q4', 'a', 'q6')
 	automata.setearArista('q5', 'a', 'q7')
 	
+	automata.agregarFinal('q6')
+	automata.agregarFinal('q7')
+	
 	return automata
 
 def Minimizar(automata):
 	clases = {}
-	clases[1] =  filter(lambda q : not (q in automata.F), automata.Q)
-	clases[2] =  automata.F
+	
+	for estado in automata.Q:
+		if estado in automata.F:
+			clases[estado] = 2
+		else:
+			clases[estado] = 1
+	
+	while True:
+		for simbolo in automata.Sigma:
+			
