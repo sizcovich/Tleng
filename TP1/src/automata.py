@@ -1,7 +1,22 @@
-class automata(object):
-	def __init(self):
-		self.Q = {}
-		self.Sigma = {}
-		self.F = {}
-		self.q0 = None;
-		self.Delta = {}
+from sets import Set
+import string
+
+class AutomataDet(object):
+	def __init__(self):
+		self.Q = { 'qT' }
+		self.Sigma = set(string.letters + string.digits + "[,:;.?!()\"\'\\&-]" + " " + "\t")
+		self.F = Set([])
+		self.q0 = 'qT'
+		self.Delta = { 'qT' : {}}
+		for simbolo in self.Sigma:
+			self.Delta['qT'][simbolo] = 'qT'
+			
+class AutomataNoDet(object):
+	def __init__(self):
+		self.Q = { 'qT' }
+		self.Sigma = set(string.letters + string.digits + "[,:;.?!()\"\'\\&-]" + " " + "\t")
+		self.F = Set([])
+		self.q0 = 'qT'
+		self.Delta = { 'qT' : {}}
+		for simbolo in self.Sigma:
+			self.Delta['qT'][simbolo] = { 'qT' }
