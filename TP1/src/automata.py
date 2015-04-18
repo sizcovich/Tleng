@@ -2,9 +2,13 @@ from sets import Set
 import string
 
 class AutomataDet(object):
-	def __init__(self):
+	def __init__(self, sigma = None):
 		self.Q = { 'qT' }
-		self.Sigma = set(string.letters + string.digits + "[,:;.?!()\"\'\\&-]" + " " + "\t")
+		if sigma is None:
+			self.Sigma = Set(string.letters + string.digits + "[,:;.?!()\"\'\\&-]" + " " + "\t")
+		else:
+			self.Sigma = Set(sigma)
+		
 		self.F = Set([])
 		self.q0 = 'qT'
 		self.Delta = { 'qT' : {}}
@@ -50,10 +54,16 @@ class AutomataDet(object):
 		self.Delta[estado1][simbolo] = estado2
 		
 class AutomataNoDet(object):
-	def __init__(self):
+	def __init__(self, sigma = None):
 		self.Q = { 'qT' }
-		self.Sigma = set(string.letters + string.digits + "[,:;.?!()\"\'\\&-]" + " " + "\t")
-		self.F = Set([])
+		if sigma is None:
+			self.Sigma = Set(string.letters + string.digits + "[,:;.?!()\"\'\\&-]" + " " + "\t")			
+		else:
+			self.Sigma = Set(sigma)
+			
+		self.Sigma.add('lambda')
+		
+		self.F = Set(sigma)
 		self.q0 = 'qT'
 		self.Delta = { 'qT' : {}}
 		for simbolo in self.Sigma:
