@@ -41,15 +41,15 @@ class AutomataDet(object):
 			
 		self.F.remove(estado)
 		
-	def agregarArista(estado1, simbolo, estado2):
+	def setearArista(estado1, simbolo, estado2):
 		if not (estado1 in self.Q):
-			sys.exit("Se intento agregar una arista desde el estado '%s', no existente en el automata." % estado1)
+			sys.exit("Se intento poner una arista desde el estado '%s', no existente en el automata." % estado1)
 			
 		if not (simbolo in self.Sigma):
-			sys.exit("Se intento agregar una arista con el simbolo '%s', no existente en el alfabeto." % simbolo)
+			sys.exit("Se intento poner una arista con el simbolo '%s', no existente en el alfabeto." % simbolo)
 			
 		if not (estado2 in self.Q):
-			sys.exit("Se intento agregar una arista hacia el estado '%s', no existente en el automata." % estado2)
+			sys.exit("Se intento poner una arista hacia el estado '%s', no existente en el automata." % estado2)
 		
 		self.Delta[estado1][simbolo] = estado2
 		
