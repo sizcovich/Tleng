@@ -15,33 +15,34 @@ class AutomataDet(object):
 		for simbolo in self.Sigma:
 			self.Delta['qT'][simbolo] = 'qT'
 	
-	def setearInicial(estado):
+	def setearInicial(self, estado):
 		if not (estado in self.Q):
 			sys.exit("Se intento seleccionar como estado inicial el estado '%s', no existente en el automata." % estado)
 			
 		self.q0 = estado
 	
-	def agregarEstado(estado):
+	def agregarEstado(self, estado):
 		if estado in self.Q:
 			sys.exit("Se intento agregar el estado '%s' ya existente en el automata." % estado)
 		
 		self.Q.add(estado)
+		self.Delta[estado] = {}
 		for simbolo in self.Sigma:
 			self.Delta[estado][simbolo] = 'qT'
 			
-	def agregarFinal(estado):
+	def agregarFinal(self, estado):
 		if not (estado in self.Q):
 			sys.exit("Se intento agregar a los estados finales el estado '%s', no existente en el automata." % estado)
 			
 		self.F.add(estado)
 			
-	def removerFinal(estado):
+	def removerFinal(self, estado):
 		if not (estado in self.Q):
 			sys.exit("Se intento remover de los estados finales el estado '%s', no existente en el automata." % estado)
 			
 		self.F.remove(estado)
 		
-	def setearArista(estado1, simbolo, estado2):
+	def setearArista(self, estado1, simbolo, estado2):
 		if not (estado1 in self.Q):
 			sys.exit("Se intento poner una arista desde el estado '%s', no existente en el automata." % estado1)
 			
@@ -69,33 +70,34 @@ class AutomataNoDet(object):
 		for simbolo in self.Sigma:
 			self.Delta['qT'][simbolo] = {}
 			
-	def setearInicial(estado):
+	def setearInicial(self, estado):
 		if not (estado in self.Q):
 			sys.exit("Se intento seleccionar como estado inicial el estado '%s', no existente en el automata." % estado)
 			
-		self.q0 = estado	
+		self.q0 = estado
 			
-	def agregarEstado(estado):
+	def agregarEstado(self, estado):
 		if (estado in self.Q):
 			sys.exit("Se intento agregar el estado '%s' ya existente en el automata." % estado)
 		
 		self.Q.add(estado)
+		self.Delta[estado] = {}
 		for simbolo in self.Sigma:
 			self.Delta[estado][simbolo] = {}
 			
-	def agregarFinal(estado):
+	def agregarFinal(self, estado):
 		if not (estado in self.Q):
 			sys.exit("Se intento agregar a los estados finales el estado '%s', no existente en el automata." % estado)
 			
 		self.F.add(estado)
 			
-	def removerFinal(estado):
+	def removerFinal(self, estado):
 		if not (estado in self.Q):
 			sys.exit("Se intento remover de los estados finales el estado '%s', no existente en el automata." % estado)
 			
 		self.F.remove(estado)
 		
-	def agregarArista(estado1, simbolo, estado2):
+	def agregarArista(self, estado1, simbolo, estado2):
 		if not (estado1 in self.Q):
 			sys.exit("Se intento agregar una arista desde el estado '%s', no existente en el automata." % estado1)
 			
@@ -107,7 +109,7 @@ class AutomataNoDet(object):
 		
 		self.Delta[estado1][simbolo].add(estado2)
 		
-	def removerArista(estado1, simbolo, estado2):
+	def removerArista(self, estado1, simbolo, estado2):
 		if not (estado1 in self.Q):
 			sys.exit("Se intento remover una arista desde el estado '%s', no existente en el automata." % estado1)
 			
