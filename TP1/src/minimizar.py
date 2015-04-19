@@ -1,38 +1,71 @@
 from automata import AutomataDet
 from sets import Set
 
-def ejemplo():
-	automata = AutomataDet("aso")
-	automata.agregarEstado('q1')
-	automata.agregarEstado('q2')
-	automata.agregarEstado('q3')
-	automata.agregarEstado('q4')
-	automata.agregarEstado('q5')
-	automata.agregarEstado('q6')
-	automata.agregarEstado('q7')
-	
-	automata.setearInicial('q1')
-	automata.setearArista('q1', 'o', 'q2')
-	automata.setearArista('q1', 'a', 'q3')
-	automata.setearArista('q2', 's', 'q4')
-	automata.setearArista('q3', 's', 'q5')
-	automata.setearArista('q4', 'a', 'q6')
-	automata.setearArista('q5', 'a', 'q7')
-	
-	automata.agregarFinal('q6')
-	automata.agregarFinal('q7')
-	
-	return automata
-
-def Minimizar(automata):
-	clases = {}
+def minimizar(automata):
+	ultimasClases = {}
+	ejes = {}
+	claseInicial = 'q0'
+	clasesFinales = Set()
 	
 	for estado in automata.Q:
 		if estado in automata.F:
-			clases[estado] = 2
+			ultimasClases[estado] = 'q1'
 		else:
-			clases[estado] = 1
+			ultimasClases[estado] = 'q0'
 	
 	while True:
-		for simbolo in automata.Sigma:
+		tabla = {}
+		for estado in automata.Q:
+			tabla[estado] = {}
+			for simbolo in automata.Sigma:
+				tabla[estado][simbolo] = ultimasClases[automata.Delta[estado][simbolo]]
+		
+		clases = {}
+		ejes = {}
+		clasesFinales = Set()
+		
+		mapeo = {}
+		proximaClase = 0
+		
+		for estado in automata.Q:
+			# convierto los valores de la tabla a un string
+			# de la pinta "q1-q2-q2-q1" para poder hashear
+			temp = ultimasClases[estado] + '-' + '-'.join(tabla[estado])
 			
+			if temp in mapeo:
+				clases[estado] = mapeo[temp]
+			else:
+				nuevoEstado = 'q' + str(proximaClase)
+				mapeo[temp] = nuevoEstado
+				clases[estado] = nuevoEstado
+				ejes[nuevoEstado] = tabla[estado]
+				proximaClase += 1
+			
+			if automata.q0 == estado:
+				claseInicial = mapeo[temp]
+				
+			if estado in automata.F:
+				clasesFinales.add(mapeo[temp])
+				
+		if clases == ultimasClases:
+			break
+		
+		ultimasClases = clases
+		
+	nuevo = AutomataDet(automata.Sigma)
+	
+	for estado in Set(ultimasClases.values()):
+		nuevo.agregarEstado(estado)
+	
+	for estado in Set(ultimasClases.values()):		
+		for simbolo in automata.Sigma:
+			nuevo.setearArista(estado, simbolo, ejes[estado][simbolo])			
+			
+	nuevo.setearInicial(claseInicial)
+	
+	for clase in clasesFinales:
+		nuevo.agregarFinal(clase)
+		
+	nuevo.removerEstado('qT')
+
+	return nuevo

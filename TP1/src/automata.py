@@ -1,5 +1,6 @@
 from sets import Set
 import string
+import sys
 
 class AutomataDet(object):
 	def __init__(self, sigma = None):
@@ -24,7 +25,12 @@ class AutomataDet(object):
 	def agregarEstado(self, estado):
 		if estado in self.Q:
 			sys.exit("Se intento agregar el estado '%s' ya existente en el automata." % estado)
-		
+			
+		if not ('qT' in self.Q):
+			self.Q.add('qT')
+			for simbolo in self.Sigma:
+				self.Delta['qT'][simbolo] = 'qT'
+
 		self.Q.add(estado)
 		self.Delta[estado] = {}
 		for simbolo in self.Sigma:
@@ -53,6 +59,27 @@ class AutomataDet(object):
 			sys.exit("Se intento poner una arista hacia el estado '%s', no existente en el automata." % estado2)
 		
 		self.Delta[estado1][simbolo] = estado2
+		
+	def removerEstado(self, estado):
+		if not (estado in self.Q):
+			sys.exit("Se intento sacar el estado '%s', no existente en el automata." % estado)
+			
+		if len(self.Q) == 1:
+			sys.exit("Se intento sacar el estado '%s', pero es el unico estado en el automata." % estado)
+		
+		for estado2 in self.Q:
+			if estado2 == estado:
+				continue
+				
+			for simbolo in self.Sigma:
+				if self.Delta[estado2][simbolo] == estado:
+					sys.exit("Se intento sacar el estado '%s', pero existen estados que llegan a el mismo." % estado)
+		
+		self.Q.remove(estado)
+		self.Delta.pop(estado)
+		
+		if self.q0 == estado:
+			self.q0 = iter(self.Q).next()
 		
 class AutomataNoDet(object):
 	def __init__(self, sigma = None):
@@ -120,3 +147,24 @@ class AutomataNoDet(object):
 			sys.exit("Se intento poner una arista hacia el estado '%s', no existente en el automata." % estado2)
 		
 		self.Delta[estado1][simbolo].remove(estado2)
+		
+	def removerEstado(self, estado):
+		if not (estado in self.Q):
+			sys.exit("Se intento sacar el estado '%s', no existente en el automata." % estado)
+			
+		if len(self.Q) == 1:
+			sys.exit("Se intento sacar el estado '%s', pero es el unico estado en el automata." % estado)
+		
+		for estado2 in self.Q:
+			if estado2 == estado:
+				continue
+				
+			for simbolo in self.Sigma:
+				if estado in self.Delta[estado2][simbolo]:
+					sys.exit("Se intento sacar el estado '%s', pero existen estados que llegan a el mismo." % estado)
+		
+		self.Q.remove(estado)
+		self.Delta.pop(estado)
+		
+		if self.q0 == estado:
+			self.q0 = iter(self.Q).next()
