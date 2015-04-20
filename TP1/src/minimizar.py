@@ -2,6 +2,15 @@ from automata import AutomataDet
 from sets import Set
 
 def minimizar(automata):
+
+	if not 'qT' in automata.Q:
+		automata.agregarEstado('qT')
+		
+	for estado in automata.Q:
+		for simbolo in automata.Sigma:
+			if not (simbolo in automata.Delta[estado]):				
+				automata.Delta[estado][simbolo] = 'qT'
+	
 	ultimasClases = {}
 	ejes = {}
 	claseInicial = 'q0'
@@ -30,7 +39,7 @@ def minimizar(automata):
 		for estado in automata.Q:
 			# convierto los valores de la tabla a un string
 			# de la pinta "q1-q2-q2-q1" para poder hashear
-			temp = ultimasClases[estado] + '-' + '-'.join(tabla[estado])
+			temp = ultimasClases[estado] + '-' + '-'.join(tabla[estado].values())
 			
 			if temp in mapeo:
 				clases[estado] = mapeo[temp]
@@ -51,7 +60,12 @@ def minimizar(automata):
 			break
 		
 		ultimasClases = clases
-		
+
+	print(clases)
+	print(ejes)
+	print(clasesFinales)
+	print(mapeo)
+	
 	nuevo = AutomataDet(automata.Sigma)
 	
 	for estado in Set(ultimasClases.values()):
@@ -65,7 +79,5 @@ def minimizar(automata):
 	
 	for clase in clasesFinales:
 		nuevo.agregarFinal(clase)
-		
-	nuevo.removerEstado('qT')
 
 	return nuevo

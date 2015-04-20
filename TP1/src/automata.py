@@ -3,18 +3,12 @@ import string
 import sys
 
 class AutomataDet(object):
-	def __init__(self, sigma = None):
-		self.Q = { 'qT' }
-		if sigma is None:
-			self.Sigma = Set(string.letters + string.digits + "[,:;.?!()\"\'\\&-]" + " " + "\t")
-		else:
-			self.Sigma = Set(sigma)
-		
+	def __init__(self, sigma):
+		self.Q = Set([])
+		self.Sigma = Set(sigma)		
 		self.F = Set([])
-		self.q0 = 'qT'
-		self.Delta = { 'qT' : {}}
-		for simbolo in self.Sigma:
-			self.Delta['qT'][simbolo] = 'qT'
+		self.q0 = None
+		self.Delta = { }
 	
 	def setearInicial(self, estado):
 		if not (estado in self.Q):
@@ -26,16 +20,9 @@ class AutomataDet(object):
 		if estado in self.Q:
 			sys.exit("Se intento agregar el estado '%s' ya existente en el automata." % estado)
 			
-		if not ('qT' in self.Q):
-			self.Q.add('qT')
-			for simbolo in self.Sigma:
-				self.Delta['qT'][simbolo] = 'qT'
-
 		self.Q.add(estado)
 		self.Delta[estado] = {}
-		for simbolo in self.Sigma:
-			self.Delta[estado][simbolo] = 'qT'
-			
+					
 	def agregarFinal(self, estado):
 		if not (estado in self.Q):
 			sys.exit("Se intento agregar a los estados finales el estado '%s', no existente en el automata." % estado)
@@ -83,19 +70,12 @@ class AutomataDet(object):
 		
 class AutomataNoDet(object):
 	def __init__(self, sigma = None):
-		self.Q = { 'qT' }
-		if sigma is None:
-			self.Sigma = Set(string.letters + string.digits + "[,:;.?!()\"\'\\&-]" + " " + "\t")			
-		else:
-			self.Sigma = Set(sigma)
-			
-		self.Sigma.add('lambda')
-		
+		self.Q = Set([])
+		self.Sigma = Set(sigma)			
+		self.Sigma.add('lambda')		
 		self.F = Set(sigma)
-		self.q0 = 'qT'
-		self.Delta = { 'qT' : {} }
-		for simbolo in self.Sigma:
-			self.Delta['qT'][simbolo] = Set()
+		self.q0 = None
+		self.Delta = { }
 			
 	def setearInicial(self, estado):
 		if not (estado in self.Q):

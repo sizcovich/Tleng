@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*- 
 #!/usr/bin/python
 
+from parsear import importarDeArchivo
+from serializar import exportarADot
 
 def grafo(archivo_automata, archivo_dot):
-    raise NotImplementedError
+	automata = importarDeArchivo(archivo_regex)
+	exportarADot(automata, archivo_dot)
