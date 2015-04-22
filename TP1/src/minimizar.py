@@ -3,9 +3,11 @@ from sets import Set
 
 def minimizar(automata):
 
+	# Agrego el trampa para completar la funcion Delta
 	if not 'qT' in automata.Q:
 		automata.agregarEstado('qT')
-		
+	
+	# Mando todos los que no esten definidos al trampa
 	for estado in automata.Q:
 		for simbolo in automata.Sigma:
 			if not (simbolo in automata.Delta[estado]):				
@@ -13,14 +15,14 @@ def minimizar(automata):
 	
 	ultimasClases = {}
 	ejes = {}
-	claseInicial = 'q0'
+	claseInicial = 'q1'
 	clasesFinales = Set()
 	
 	for estado in automata.Q:
 		if estado in automata.F:
-			ultimasClases[estado] = 'q1'
+			ultimasClases[estado] = 'q2'
 		else:
-			ultimasClases[estado] = 'q0'
+			ultimasClases[estado] = 'q1'
 	
 	while True:
 		tabla = {}
@@ -34,7 +36,7 @@ def minimizar(automata):
 		clasesFinales = Set()
 		
 		mapeo = {}
-		proximaClase = 0
+		proximaClase = 1
 		
 		for estado in automata.Q:
 			# convierto los valores de la tabla a un string
@@ -60,11 +62,6 @@ def minimizar(automata):
 			break
 		
 		ultimasClases = clases
-
-	print(clases)
-	print(ejes)
-	print(clasesFinales)
-	print(mapeo)
 	
 	nuevo = AutomataDet(automata.Sigma)
 	

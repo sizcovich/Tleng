@@ -68,6 +68,18 @@ class AutomataDet(object):
 		if self.q0 == estado:
 			self.q0 = iter(self.Q).next()
 		
+	def acepta(self, cadena):
+		estadoActual = 	self.q0;		
+		for simbolo in cadena:
+			if not (simbolo in self.Delta[estadoActual]):
+				return False;
+			estadoActual = self.Delta[estadoActual][simbolo];
+			
+		if estadoActual in self.F:
+			return True;
+			
+		return False;
+	
 class AutomataNoDet(object):
 	def __init__(self, sigma = None):
 		self.Q = Set([])
