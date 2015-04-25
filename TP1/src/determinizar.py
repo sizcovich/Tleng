@@ -1,89 +1,91 @@
-from automata import *
 from sets import Set
+import string
+from automata import AutomataNoDet
+from automata import AutomataDet
 from collections import deque
 
-def clausuraLambda(estado, automataNoDet):
-
+def clausuraLambda(estado,automataNoDet):
 	clausura = automataNoDet.Delta[estado]['lambda']
 	clausura.add(estado)
 
 	while True:
-		estadosaAAgregar = Set([])
-		
-		for est in clausura:			
-			for est2 in automataNoDet.Delta[est]['lambda']:
+		estadosAgregar = Set([])
+		for est in clausura:
+			clausura2 = automataNoDet.Delta[est]['lambda']
+			for est2 in clausura2:
 				if not (est2 in clausura):
-					estadosaAAgregar.add(est2)
-					
-		if not estadosaAAgregar:
+					estadosAgregar.add(est2)
+		clausura = clausura|estadosAgregar
+		if (len(estadosAgregar) == 0):
 			return clausura
-			
-		clausura.update(estadosaAAgregar)
 
-def mover(estados, simbolo, automataNoDet):
-
+def mover(estados,simbolo,automataNoDet):
 	moverPorSimbolo = Set([])
 	clausura = Set([])
-	
-	for est in estados:		
-		moverPorSimbolo.update(automataNoDet.Delta[est][simbolo])
+	for est in estados:
+		estado = automataNoDet.Delta[est][simbolo]
+		moverPorSimbolo = moverPorSimbolo|estado
 
-	for simb in moverPorSimbolo:
-		clausura.update(clausuraLambda(simb, automataNoDet))
-	
+	for a in moverPorSimbolo:
+		aux3 = clausuraLambda(a,automataNoDet)
+		clausura = clausura|aux3
+
 	return clausura
 
 def determinizar(automataNoDet):
-
 	estadoInicial = automataNoDet.q0
-	primerPaso = clausuraLambda(estadoInicial, automataNoDet)
+	primerPaso = clausuraLambda(estadoInicial,automataNoDet)
 
-	valoresExistentes = Set([primerPaso])
-	
+	valoresExistentes = Set([]) 
+	valoresExistentes.add(primerPaso)
+
 	i = 1
 
-	estados = { 0 : primerPaso  }
-	aristas = { 0 : {} }	
+	estados = { }
+	estados[0] = primerPaso
 
-	valoresACalcular = deque([primerPaso])
-		
-	while not valoresACalcular:
+	aristas = { }
+	aristas[0] = { }
+
+	valoresACalcular = deque([])
+	valoresACalcular.append(primerPaso)
+	while not (len(valoresACalcular) == 0):
 		conjuntoACalcular = valoresACalcular.pop()
-		
-		for simbolo in automataNoDet.Sigma - Set(['lambda']):
-			conjunto = mover(conjuntoACalcular,simbolo,automataNoDet)
-			
-			if not (conjunto in valoresExistentes):
-				#agrego un estado
-				valoresExistentes.add(conjunto)
-				valoresACalcular.append(conjunto)
-				
-				estados[i] = conjunto
-				
-				for j in range(len(estados)):  #agrego la arista
-					if estados[j] == conjuntoACalcular:
-						aristas[j][i] = Set([simbolo])
-						aristas[i] = { }
-						break
+		for simbolo in automataNoDet.Sigma:
+			if not (simbolo == 'lambda'):
+				conjunto = Set([])	
+				conjunto = mover(conjuntoACalcular,simbolo,automataNoDet)
+				if not (conjunto in valoresExistentes):
+					valoresExistentes.add(conjunto)
+					valoresACalcular.append(conjunto)
 
-				i = i + 1				
-			else:
-				k = 0
-				
-				for m in range(len(estados)):
-					if estados[m] == conjunto:
-						k = m
-						break
+					estados[i] = conjunto #agrego un estado
+					for j in range(len(estados)):  #agrego la arista
+						if estados[j] == conjuntoACalcular:
+							aristas[j][i] = Set([simbolo])
+							aristas[i] = { }
+							break
 
-				for j in range(len(estados)):
-					if estados[j] == conjuntoACalcular:
-						if not (k in aristas[j]):
-							aristas[j][k] = Set([simbolo])
-						else:
-							aristas[j][k].add(simbolo)
-						break
-	
-	automataDet = AutomataDet(automataNoDet.Sigma)
+					i = i + 1
+					#agregarEstado(automataDet,conjunto)
+					#setearArista(automataDet,conjuntoACalcular,simbolo,conjunto)
+				else:
+					k = 0
+					for m in range(len(estados)):
+						if estados[m] == conjunto:
+							k = m
+							break
+
+					for j in range(len(estados)):
+						if estados[j] == conjuntoACalcular:
+							if not (k in aristas[j]):
+								aristas[j][k] = Set([simbolo])
+							else:
+								aristas[j][k].add(simbolo)
+							break
+					#setearArista(automataDet,conjuntoACalcular,simbolo,conjunto)
+
+	automataDet = AutomataDet(automataNoDet.Sigma - Set(['lambda']))
 
 	#agrego estados
 	for i in range(len(estados)):
@@ -97,9 +99,10 @@ def determinizar(automataNoDet):
 		for j in range(len(estados)):
 			if j in aristas[i]:
 				for est in aristas[i][j]:
-					est1 = 'q' + str(i)
-					est2 = 'q' + str(j)
-					automataDet.setearArista(est1, est, est2)
+					if est != 'lambda':
+						est1 = 'q' + str(i)
+						est2 = 'q' + str(j)
+						automataDet.setearArista(est1,est,est2)
 
 	#agrego estados finales
 	for conj in valoresExistentes:
@@ -114,7 +117,6 @@ def determinizar(automataNoDet):
 	return automataDet
 
 def ejemplo():
-
 	automata = AutomataNoDet("01")
 	automata.agregarEstado('q0')
 	automata.agregarEstado('q1')

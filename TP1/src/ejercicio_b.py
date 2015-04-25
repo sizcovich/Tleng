@@ -4,7 +4,6 @@
 from parsear import importarDeArchivo
 
 def pertenece_al_lenguaje(archivo_automata, cadena):
-
 	automata = importarDeArchivo(archivo_automata)
 	if automata.acepta(cadena):
 		print("TRUE")

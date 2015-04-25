@@ -48,7 +48,12 @@ if __name__ == "__main__":
         if parametros_coinciden(parametros, "-leng", None, "-aut", None):
             archivo_regex = archivo_para_leer(parametros[1])
             archivo_automata = archivo_para_escribir(parametros[3])
-            afd_minimo(archivo_regex, archivo_automata)
+            afd_minimo(archivo_regex, archivo_automata, True)
+            sys.exit(0)
+        elif parametros_coinciden(parametros, "-leng", None, "-nomin", None):
+            archivo_regex = archivo_para_leer(parametros[1])
+            archivo_automata = archivo_para_escribir(parametros[3])
+            afd_minimo(archivo_regex, archivo_automata, False)
             sys.exit(0)
         elif parametros_coinciden(parametros, "-aut", None, None):
             archivo_automata = archivo_para_leer(parametros[1])
