@@ -14,12 +14,12 @@ def exportarADot(automata, archivo_dot):
 
 	for estado in automata.Q:
 		ejes = {}
-		for rel in automata.Delta[estado]:
-			estado2 = automata.Delta[estado][rel]
+		for simbolo in automata.Delta[estado]:
+			estado2 = automata.Delta[estado][simbolo]
 			if estado2 in ejes:
-				ejes[estado2].add(rel)
+				ejes[estado2].add(simbolo)
 			else:
-				ejes[estado2] = Set(rel)
+				ejes[estado2] = Set(simbolo)
 
 		for estado2 in ejes:
 			archivo_dot.write("%s -> %s [label=\"%s\"]\n" % (estado, estado2, ", ".join(['\\\\t' if s == '\t' else s for s in ejes[estado2]])))
