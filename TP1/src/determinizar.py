@@ -35,7 +35,6 @@ def mover(estados,simbolo,automataNoDet):
 def determinizar(automataNoDet):
 	estadoInicial = automataNoDet.q0
 	primerPaso = clausuraLambda(estadoInicial,automataNoDet)
-
 	valoresExistentes = Set([]) 
 	valoresExistentes.add(primerPaso)
 
@@ -55,35 +54,36 @@ def determinizar(automataNoDet):
 			if not (simbolo == 'lambda'):
 				conjunto = Set([])	
 				conjunto = mover(conjuntoACalcular,simbolo,automataNoDet)
-				if not (conjunto in valoresExistentes):
-					valoresExistentes.add(conjunto)
-					valoresACalcular.append(conjunto)
+				if not (conjunto == Set([])):
+					if not (conjunto in valoresExistentes):
+						valoresExistentes.add(conjunto)
+						valoresACalcular.append(conjunto)
 
-					estados[i] = conjunto #agrego un estado
-					for j in range(len(estados)):  #agrego la arista
-						if estados[j] == conjuntoACalcular:
-							aristas[j][i] = Set([simbolo])
-							aristas[i] = { }
-							break
+						estados[i] = conjunto #agrego un estado
+						for j in range(len(estados)):  #agrego la arista
+							if estados[j] == conjuntoACalcular:
+								aristas[j][i] = Set([simbolo])
+								aristas[i] = { }
+								break
 
-					i = i + 1
-					#agregarEstado(automataDet,conjunto)
-					#setearArista(automataDet,conjuntoACalcular,simbolo,conjunto)
-				else:
-					k = 0
-					for m in range(len(estados)):
-						if estados[m] == conjunto:
-							k = m
-							break
+						i = i + 1
+						#agregarEstado(automataDet,conjunto)
+						#setearArista(automataDet,conjuntoACalcular,simbolo,conjunto)
+					else:
+						k = 0
+						for m in range(len(estados)):
+							if estados[m] == conjunto:
+								k = m
+								break
 
-					for j in range(len(estados)):
-						if estados[j] == conjuntoACalcular:
-							if not (k in aristas[j]):
-								aristas[j][k] = Set([simbolo])
-							else:
-								aristas[j][k].add(simbolo)
-							break
-					#setearArista(automataDet,conjuntoACalcular,simbolo,conjunto)
+						for j in range(len(estados)):
+							if estados[j] == conjuntoACalcular:
+								if not (k in aristas[j]):
+									aristas[j][k] = Set([simbolo])
+								else:
+									aristas[j][k].add(simbolo)
+								break
+						#setearArista(automataDet,conjuntoACalcular,simbolo,conjunto)
 
 	automataDet = AutomataDet(automataNoDet.Sigma - Set(['lambda']))
 
@@ -103,14 +103,13 @@ def determinizar(automataNoDet):
 						est1 = 'q' + str(i)
 						est2 = 'q' + str(j)
 						automataDet.setearArista(est1,est,est2)
-
 	#agrego estados finales
 	for conj in valoresExistentes:
 		for est in conj:
 			if est in automataNoDet.F:
 				for m in range(len(estados)):
 						if estados[m] == conj:
-							est1 = 'q' + str(i)
+							est1 = 'q' + str(m)
 							automataDet.agregarFinal(est1)
 							break
 
