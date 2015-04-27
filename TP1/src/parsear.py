@@ -86,6 +86,5 @@ def importarDeArchivo(archivo_automata):
 			automata.setearArista(separado[0], separado[1], separado[2])
 
 		return automata
-	except Exception,e:
-		print(e)
+	except:
 		sys.exit("El archivo de automata no sigue el formato esperado.")

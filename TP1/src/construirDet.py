@@ -1,17 +1,5 @@
 from automata import AutomataDet
-
-def construirBase(sigma, simbolo):
-	automata = AutomataDet(sigma)
-	
-	automata.agregarEstado('q0')
-	automata.agregarEstado('q1')
-	
-	automata.setearInicial('q0')
-	automata.agregarFinal('q1')
-	
-	automata.setearArista('q0', simbolo, 'q1')
-
-	return automata
+from sets import Set
 
 def construirComplemento(automata):
 	nuevo = AutomataDet(automata.Sigma)
@@ -21,8 +9,16 @@ def construirComplemento(automata):
 		if not estado in automata.F:
 			nuevo.agregarFinal(estado)
 
-	nuevo.agregarEstado('qT')
-	nuevo.agregarFinal('qT')
+	# Mando todos los que no esten definidos al trampa
+	agregarTrampa = False
+	for estado in automata.Q:
+		if Set(automata.Delta[estado].keys()) != automata.Sigma:
+			agregarTrampa = True
+			break
+
+	if agregarTrampa:
+		nuevo.agregarEstado('qT')
+		nuevo.agregarFinal('qT')
 
 	nuevo.setearInicial(automata.q0)
 

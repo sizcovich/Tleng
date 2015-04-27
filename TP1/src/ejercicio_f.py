@@ -3,7 +3,7 @@
 
 from parsear import importarDeArchivo
 from construirDet import construirComplemento, construirInterseccion
-from minimizar import minimizar
+from algoritmos import minimizar
 
 def equivalentes(archivo_automata_in1, archivo_automata_in2):
 	automata1 = importarDeArchivo(archivo_automata_in1)
@@ -16,4 +16,4 @@ def equivalentes(archivo_automata_in1, archivo_automata_in2):
 		
 def igualar(automata1, automata2):
 	# Si es vacio, el not de un Set da True.
-	return not construirInterseccion(automata1, construirComplemento(automata2)).F
+	return not minimizar(construirInterseccion(automata1, construirComplemento(automata2))).F
