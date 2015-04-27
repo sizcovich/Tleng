@@ -54,7 +54,7 @@ def determinizar(automataNoDet):
 			if not (simbolo == 'lambda'):
 				conjunto = Set([])	
 				conjunto = mover(conjuntoACalcular,simbolo,automataNoDet)
-				if not (conjunto == Set([])):
+				if conjunto:
 					if not (conjunto in valoresExistentes):
 						valoresExistentes.add(conjunto)
 						valoresACalcular.append(conjunto)

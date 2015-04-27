@@ -29,12 +29,6 @@ class AutomataDet(object):
 
 		self.F.add(estado)
 
-	def quitarFinal(self, estado):
-		if not (estado in self.F):
-			sys.exit("Se intento quitar de los estados finales el estado '%s', el cual no pertenecia a dicho conjunto." % estado)
-
-		self.F.remove(estado)
-
 	def setearArista(self, estado1, simbolo, estado2):
 		if not (estado1 in self.Q):
 			sys.exit("Se intento poner una arista desde el estado '%s', no existente en el automata." % estado1)

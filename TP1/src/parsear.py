@@ -1,4 +1,4 @@
-from construir import *
+from construirNoDet import *
 from automata import AutomataDet
 
 def importarDeRegex(archivo_regex):

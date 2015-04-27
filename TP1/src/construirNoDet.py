@@ -141,11 +141,14 @@ def renombrarEstados(automata):
 	i = len(automata.Q) - 1
 
 	for estado in automata.F:
-		nuevoEstado = 'q' + str(i)
-		nuevo.agregarEstado(nuevoEstado)
-		nuevo.agregarFinal(nuevoEstado)
-		mapeo[estado] = nuevoEstado		
-		i -= 1
+		if estado == automata.q0:
+			nuevo.agregarFinal('q0')
+		else:		
+			nuevoEstado = 'q' + str(i)
+			nuevo.agregarEstado(nuevoEstado)
+			nuevo.agregarFinal(nuevoEstado)
+			mapeo[estado] = nuevoEstado		
+			i -= 1
 
 	i = 1
 

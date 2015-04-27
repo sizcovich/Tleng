@@ -3,15 +3,18 @@ from sets import Set
 
 def minimizar(automata):	
 	# Mando todos los que no esten definidos al trampa
-	trampaAgregado = False
+	agregarTrampa = False
 	for estado in automata.Q:
-		for simbolo in automata.Sigma:
-			if not (simbolo in automata.Delta[estado]):
-				if not trampaAdded:
-					automata.agregarEstado('qT')
-					trampaAgregado = True
-					
-				automata.Delta[estado][simbolo] = 'qT'
+		if Set(automata.Delta[estado].keys()) != automata.Sigma:
+			agregarTrampa = True
+			break
+
+	if agregarTrampa:
+		automata.agregarEstado('qT')
+		for estado in automata.Q:		
+			for simbolo in automata.Sigma:
+				if not (simbolo in automata.Delta[estado]):
+					automata.Delta[estado][simbolo] = 'qT'
 
 	ultimasClases = {}
 	ejes = {}
