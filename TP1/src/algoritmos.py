@@ -200,3 +200,6 @@ def minimizar(automata):
 		nuevo.agregarFinal(clase)
 
 	return nuevo
+	
+def noAceptaNingunaCadena(automata):
+	return True
