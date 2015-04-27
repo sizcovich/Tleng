@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*- 
 from automata import AutomataDet
 from sets import Set
 
@@ -32,7 +33,6 @@ def construirComplemento(automata):
 	return renombrarEstados(nuevo)
 
 def construirInterseccion(automata1, automata2):
-	nuevo = AutomataDet(automata1 | automata2)
 	automata1Negado = construirComplemento(automata1)
 	automata2Negado = construirComplemento(automata2)
 
@@ -42,7 +42,9 @@ def construirInterseccion(automata1, automata2):
 
 	return nuevo
 
-def construirUnion(automat1, automata2):
+def construirUnion(automata1, automata2):
+	nuevo = AutomataDet(automata1 | automata2)
+
 	for estado_aut1 in automata1.Q:
  		for estado_aut2 in automata2.Q:
  			nuevo.agregarEstado(estado_aut1 + estado_aut2)
