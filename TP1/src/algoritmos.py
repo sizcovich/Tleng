@@ -202,4 +202,23 @@ def minimizar(automata):
 	return nuevo
 	
 def noAceptaNingunaCadena(automata):
+	estadosVisitados = { }
+	queue = deque([])
+	for est in automata.Q:
+		estadosVisitados[est] = False
+
+	estadosVisitados[automata.q0] = True
+	queue.append(automata.q0)
+
+	while not (len(queue) == 0):
+		estado = queue.popleft()
+		for simbolo in automata.Sigma:
+			if simbolo in automata.Delta[estado]:
+				vecino = automata.Delta[estado][simbolo]
+				if not estadosVisitados[vecino]:
+					if vecino in automata.F:
+						return False
+					estadosVisitados[vecino] = True
+					queue.append(vecino)
+
 	return True
