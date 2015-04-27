@@ -46,7 +46,7 @@ def construirUnion(automat1, automata2):
 	for estado_aut1 in automata1.Q:
  		for estado_aut2 in automata2.Q:
  			nuevo.agregarEstado(estado_aut1 + estado_aut2)
- 			if estado_aut1 in automata1.F || estado_aut2 in automata2.F
+ 			if (estado_aut1 in automata1.F) or (estado_aut2 in automata2.F):
  				nuevo.agregarFinal(estado_aut1 + estado_aut2)
 
  	nuevo.setearInicial(automata1.q0 + automata2.q0)
