@@ -43,7 +43,7 @@ def construirInterseccion(automata1, automata2):
 	return nuevo
 
 def construirUnion(automata1, automata2):
-	nuevo = AutomataDet(automata1 | automata2)
+	nuevo = AutomataDet(automata1.Sigma | automata2.Sigma)
 
 	for estado_aut1 in automata1.Q:
  		for estado_aut2 in automata2.Q:
