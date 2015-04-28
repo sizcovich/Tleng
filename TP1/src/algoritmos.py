@@ -118,7 +118,7 @@ def determinizar(automataNoDet):
 							automataDet.agregarFinal(est1)
 							break
 
-	return automataDet
+	return renombrarEstados(nuevo)
 
 def minimizar(automata):	
 	# Mando todos los que no esten definidos al trampa
@@ -199,10 +199,10 @@ def minimizar(automata):
 	for clase in clasesFinales:
 		nuevo.agregarFinal(clase)
 
-	return nuevo
+	return renombrarEstados(nuevo)
 	
 def noAceptaNingunaCadena(automata):
-	visitados = set()
+	visitados = Set()
 	queue = list()
 
 	list.append(automata.q0)
@@ -217,6 +217,7 @@ def noAceptaNingunaCadena(automata):
 
 		for simbolo in automata.Delta[estado]:
 			vecino = automata.Delta[estado][simbolo]
+
 			if not vecino in visitados:
 					queue.append(vecino)
 

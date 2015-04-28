@@ -1,4 +1,6 @@
 from automata import AutomataNoDet
+from sets import Set
+from collections import deque
 
 def construirBase(simbolo):
 	automata = AutomataNoDet(simbolo)
@@ -132,32 +134,40 @@ def construirOpt(automata):
 
 def renombrarEstados(automata):
 	nuevo = AutomataNoDet(automata.Sigma)
-	
-	nuevo.agregarEstado('q0')
-	
-	nuevo.setearInicial('q0')
 
-	mapeo = { automata.q0 : 'q0' }
-	i = len(automata.Q) - 1
+	visitados = Set()
+	queue = deque()
 
-	for estado in automata.F:
-		if estado == automata.q0:
-			nuevo.agregarFinal('q0')
-		else:		
+	i = 0
+	mapeo = { }
+
+	queue.append(automata.q0)
+
+	for inicial in automata.Q:
+		if inicial not in visitados:
+			queue.append(inicial)
+
+		while queue:
+			estado = queue.popleft()
+			print estado
 			nuevoEstado = 'q' + str(i)
 			nuevo.agregarEstado(nuevoEstado)
-			nuevo.agregarFinal(nuevoEstado)
-			mapeo[estado] = nuevoEstado		
-			i -= 1
 
-	i = 1
+			if estado == automata.q0:
+				nuevo.setearInicial(nuevoEstado)
 
-	for estado in automata.Q:
-		if estado != automata.q0 and not estado in automata.F:
-			nuevoEstado = 'q' + str(i)
-			nuevo.agregarEstado(nuevoEstado)
-			mapeo[estado] = nuevoEstado			
+			if estado in automata.F:
+				nuevo.agregarFinal(nuevoEstado)
+
+			mapeo[estado] = nuevoEstado
 			i += 1
+
+			visitados.add(estado)
+
+			for simbolo in automata.Delta[estado]:
+				for vecino in automata.Delta[estado][simbolo]:
+					if not vecino in visitados:
+						queue.append(vecino)
 
 	for estado in automata.Q:		
 		for simbolo in automata.Delta[estado]:

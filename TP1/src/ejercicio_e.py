@@ -3,7 +3,7 @@
 
 from parsear import importarDeArchivo
 from serializar import exportarAArchivo
-from construirDet import construirComplemento, renombrarEstados
+from construirDet import construirComplemento
 from algoritmos import minimizar
 
 def complemento(archivo_automata_in, archivo_automata_out):
@@ -12,4 +12,4 @@ def complemento(archivo_automata_in, archivo_automata_out):
 	exportarAArchivo(complemento, archivo_automata_out)
 
 def complementar(automata):	
-	return renombrarEstados(minimizar(construirComplemento(automata)))
+	return minimizar(construirComplemento(automata))

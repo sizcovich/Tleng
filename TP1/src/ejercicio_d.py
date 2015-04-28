@@ -3,7 +3,7 @@
 
 from parsear import importarDeArchivo
 from serializar import exportarAArchivo
-from construirDet import construirInterseccion, renombrarEstados
+from construirDet import construirInterseccion
 from algoritmos import minimizar
 
 def interseccion(archivo_automata_in1, archivo_automata_in2, archivo_automata_out):
@@ -13,4 +13,4 @@ def interseccion(archivo_automata_in1, archivo_automata_in2, archivo_automata_ou
 	exportarAArchivo(interseccion, archivo_automata_out)
 	
 def intersectar(automata1, automata2):
-	return renombrarEstados(minimizar(construirInterseccion(automata1, automata2)))
+	return minimizar(construirInterseccion(automata1, automata2))

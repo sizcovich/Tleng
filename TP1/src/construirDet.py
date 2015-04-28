@@ -1,11 +1,13 @@
 from automata import AutomataDet
 from sets import Set
+from collections import deque
 
 def construirComplemento(automata):
 	nuevo = AutomataDet(automata.Sigma)
 
 	for estado in automata.Q:
 		nuevo.agregarEstado(estado)
+
 		if not estado in automata.F:
 			nuevo.agregarFinal(estado)
 
@@ -25,7 +27,7 @@ def construirComplemento(automata):
 	for estado in nuevo.Q:
 		for simbolo in nuevo.Sigma:
 			if estado != 'qT' and simbolo in automata.Delta[estado]:
-				nuevo.setearArista(estado, simbolo, automata.Delta[estado][simbolo])
+					nuevo.setearArista(estado, simbolo, automata.Delta[estado][simbolo])
 			else:
 				nuevo.Delta[estado][simbolo] = 'qT'
 
@@ -42,10 +44,11 @@ def construirInterseccion(automata1, automata2):
 
 	return nuevo
 
-def construirUnion(automat1, automata2):
+def construirUnion(automata1, automata2):
 	for estado_aut1 in automata1.Q:
  		for estado_aut2 in automata2.Q:
  			nuevo.agregarEstado(estado_aut1 + estado_aut2)
+
  			if (estado_aut1 in automata1.F) or (estado_aut2 in automata2.F):
  				nuevo.agregarFinal(estado_aut1 + estado_aut2)
 
@@ -62,30 +65,40 @@ def construirUnion(automat1, automata2):
 def renombrarEstados(automata):
 	nuevo = AutomataDet(automata.Sigma)
 
-	nuevo.agregarEstado('q0')
-	nuevo.setearInicial('q0')
+	visitados = Set()
+	queue = deque()
 
-	mapeo = { automata.q0 : 'q0' }
-	i = len(automata.Q) - 1
+	i = 0
+	mapeo = { }
 
-	for estado in automata.F:
-		if estado == automata.q0:
-			nuevo.agregarFinal('q0')
-		else:		
-			nuevoEstado = 'q' + str(i)			
+	queue.append(automata.q0)
+
+	for inicial in automata.Q:
+		if inicial not in visitados:
+			queue.append(inicial)
+
+		while queue:
+			estado = queue.popleft()
+
+			nuevoEstado = 'q' + str(i)
 			nuevo.agregarEstado(nuevoEstado)
-			nuevo.agregarFinal(nuevoEstado)
-			mapeo[estado] = nuevoEstado		
-			i -= 1
 
-	i = 1
-	
-	for estado in automata.Q:
-		if estado != automata.q0 and not estado in automata.F:
-			nuevoEstado = 'q' + str(i)			
-			nuevo.agregarEstado(nuevoEstado)
-			mapeo[estado] = nuevoEstado			
+			if estado == automata.q0:
+				nuevo.setearInicial(nuevoEstado)
+
+			if estado in automata.F:
+				nuevo.agregarFinal(nuevoEstado)
+
+			mapeo[estado] = nuevoEstado
 			i += 1
+
+			visitados.add(estado)
+
+			for simbolo in automata.Delta[estado]:
+				vecino = automata.Delta[estado][simbolo]
+
+				if not vecino in visitados:
+					queue.append(vecino)
 
 	for estado in automata.Q:		
 		for simbolo in automata.Delta[estado]:
