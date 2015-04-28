@@ -156,7 +156,9 @@ En primer lugar, debimos definir los autómatas. Para esto, creamos una clase pa
 En un principio, se definió la clase \textit{AutomataDet} con su descripción correspondiente $<Q, \Sigma, \delta, S_0, F>$. El conjunto de estados, el alfabeto y el conjunto de estados finales fueron definidos con un Set\footnote{https://docs.python.org/2/library/sets.html}. La función de transición fue representada con un diccionario\footnote{https://docs.python.org/2/tutorial/datastructures.html\#dictionaries}.\\
 En la clase, definimos funciones necesarias para la realización de lo requerido. Entre ellas, se encuentran \textit{setearInicial} (que configura a un estado como el inicial), \textit{agregarEstado}, \textit{agregarFinal}, \textit{setearArista}, entre otras.\\
 \newline
-Luego, definimos la clase \textit{AutomataNoDet} con los mismos compuestos que la anterior, pero con el agregado de \textit{lambda} en $\Sigma$. Las funciones definidas en la clase fueron las mismas que para el caso de determinísticos.
+Luego, definimos la clase \textit{AutomataNoDet} con los mismos compuestos que la anterior, pero con el agregado de \textit{lambda} en $\Sigma$. Las funciones definidas en la clase fueron las mismas que para el caso de determinísticos.\\
+\newline
+Para mejorar la claridad de los resultados, definimos la función \textit{renombrarEstados} para homogeneizar los autómatas obtenidos. Para esto, se utilizó una cola\footnote{https://docs.python.org/2/library/queue.html} para recorrer los estados y renombrarlos paulatinamente.
 
 \subsection{De regex a autómata}
 Para crear un autómata a partir de una expresión regular, implementamos un algoritmo capaz de recorrer cada línea y determinar si contiene ${CONCAT}$, ${OR}$, ${STAR}$, ${PLUS}$, ${OPT}$ o $\\t$. En cada caso, se llama a la función constructora correspondiente, definida en \textit{construirNoDet.py}.\\
@@ -166,7 +168,7 @@ Para diferenciar los estados provenientes de uno u otro autómata, agregamos un 
 Nos resultó necesaria la implementación de una función \textbf{renombrarEstados} para mantener uniformidad en los autómatas y el correcto funcionamiento de nuestras funciones. Ésta utiliza una cola\footnote{https://docs.python.org/2/library/queue.html} para almacenar los estados a medida que se recorren.
 
 \subsection{Determinizar}
-Para la realización de una función capaz de transformar un autómata no determinístico en uno determinístico implementamos el algoritmo visto en clase.
+Para la realización de una función capaz de transformar un autómata no determinístico en uno determinístico implementamos el algoritmo visto en clase. Utilizamos las funciones \textit{mover} y \textit{clausura lambda}.
 
 \subsection{Minimizar}
 
@@ -176,8 +178,13 @@ Dicha función se definió dentro de la clase \textit{AutomataDet}. La misma se 
 \subsection{Generación del autómata en lenguaje DOT}
 
 \subsection{Intersección de autómatas}
+Para la intersección de autómatas. Comenzamos definiendo un nuevo autómata con $\Sigma$ = $\Sigma (automata1)$ U $\Sigma (automata2)$. Luego, se definieron los estados del nuevo autómata como la combinación de todos los estados del autómata1 con todos los del autómata2.\\
+Por otro lado, se configuraron las aristas con las transiciones correspondientes al autómata1 unidas con las correspondientes al autómata 2, para la respectiva combinación de estados.\\
+Por último, se dispuso la asignación de las transiciones faltantes al estado trampa. Para esto, se recorrieron los estados y, en el caso en el que alguno de ellos no tuviera transición a otro, se lo asigna al \textit{trampa}.
 
 \subsection{Complemento de un autómata}
+El complemento se realizó creando un nuevo autómata con todos los estados del autómata original. En el caso en el que hubiera estados que no tuvieran transición a todos los demás, lo que equivale a pedir que no esté todo $\Sigma$ en la imagen de $\delta$, se agrega el estado \textit{Trampa}.\\
+Luego, se configuran las aristas faltantes al estados trampa.
 
 \subsection{Equivalencia de autómatas}
 
