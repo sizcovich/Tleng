@@ -42,7 +42,7 @@ def construirConcat(automata1, automata2):
 			for estado2 in automata2.Delta[estado][simbolo]:
 				nuevo.agregarArista(estado + '-2', simbolo, estado2 + '-2')
 
-	return renombrarEstados(nuevo)
+	return renombrarEstadosNoDet(nuevo)
 
 def construirOr(automata1, automata2):
 	nuevo = AutomataNoDet(automata1.Sigma | automata2.Sigma)
@@ -78,7 +78,7 @@ def construirOr(automata1, automata2):
 			for estado2 in automata2.Delta[estado][simbolo]:
 				nuevo.agregarArista(estado + '-2', simbolo, estado2 + '-2')
 
-	return renombrarEstados(nuevo)
+	return renombrarEstadosNoDet(nuevo)
 
 def construirStar(automata):
 	nuevo = construirPlus(automata)
@@ -111,7 +111,7 @@ def construirPlus(automata):
 			for estado2 in automata.Delta[estado][simbolo]:
 				nuevo.agregarArista(estado + '-1', simbolo, estado2 + '-1')
 
-	return renombrarEstados(nuevo)
+	return renombrarEstadosNoDet(nuevo)
 
 def construirOpt(automata):
 	nuevo = AutomataNoDet(automata.Sigma)
@@ -132,7 +132,7 @@ def construirOpt(automata):
 
 	return automata
 
-def renombrarEstados(automata):
+def renombrarEstadosNoDet(automata):
 	nuevo = AutomataNoDet(automata.Sigma)
 
 	visitados = Set()
@@ -144,12 +144,12 @@ def renombrarEstados(automata):
 	queue.append(automata.q0)
 
 	for inicial in automata.Q:
-		if inicial not in visitados:
+		if inicial not in visitados and inicial not in queue:
 			queue.append(inicial)
 
 		while queue:
 			estado = queue.popleft()
-			print estado
+
 			nuevoEstado = 'q' + str(i)
 			nuevo.agregarEstado(nuevoEstado)
 
@@ -166,7 +166,7 @@ def renombrarEstados(automata):
 
 			for simbolo in automata.Delta[estado]:
 				for vecino in automata.Delta[estado][simbolo]:
-					if not vecino in visitados:
+					if not vecino in visitados and not vecino in queue:
 						queue.append(vecino)
 
 	for estado in automata.Q:		

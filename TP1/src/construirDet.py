@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*- 
 from automata import AutomataDet
 from sets import Set
 from collections import deque
@@ -31,20 +32,14 @@ def construirComplemento(automata):
 			else:
 				nuevo.Delta[estado][simbolo] = 'qT'
 
-	return renombrarEstados(nuevo)
+	return renombrarEstadosDet(nuevo)
 
 def construirInterseccion(automata1, automata2):
-	nuevo = AutomataDet(automata1 | automata2)
-	automata1Negado = construirComplemento(automata1)
-	automata2Negado = construirComplemento(automata2)
-
-	nuevo = construirUnion(automata1Negado, automata2Negado)
-	
-	nuevo = construirComplemento(nuevo)
-
-	return nuevo
+	return construirComplemento(construirUnion(construirComplemento(automata1), construirComplemento(automata2)))
 
 def construirUnion(automata1, automata2):
+	nuevo = AutomataDet(automata1.Sigma | automata2.Sigma)
+
 	for estado_aut1 in automata1.Q:
  		for estado_aut2 in automata2.Q:
  			nuevo.agregarEstado(estado_aut1 + estado_aut2)
@@ -60,9 +55,9 @@ def construirUnion(automata1, automata2):
 				if simbolo in automata2.Delta[estado2]:
 					nuevo.setearArista(estado1 + estado2, simbolo, automata1.Delta[estado1][simbolo] + automata2.Delta[estado2][simbolo])
 
-	return renombrarEstados(nuevo)
+	return renombrarEstadosDet(nuevo)
 	
-def renombrarEstados(automata):
+def renombrarEstadosDet(automata):
 	nuevo = AutomataDet(automata.Sigma)
 
 	visitados = Set()
@@ -74,7 +69,7 @@ def renombrarEstados(automata):
 	queue.append(automata.q0)
 
 	for inicial in automata.Q:
-		if inicial not in visitados:
+		if inicial not in visitados and inicial not in queue:
 			queue.append(inicial)
 
 		while queue:
@@ -96,11 +91,10 @@ def renombrarEstados(automata):
 
 			for simbolo in automata.Delta[estado]:
 				vecino = automata.Delta[estado][simbolo]
+				if not vecino in visitados and not vecino in queue:
+					queue.append(automata.Delta[estado][simbolo])
 
-				if not vecino in visitados:
-					queue.append(vecino)
-
-	for estado in automata.Q:		
+	for estado in automata.Q:
 		for simbolo in automata.Delta[estado]:
 			nuevo.setearArista(mapeo[estado], simbolo, mapeo[automata.Delta[estado][simbolo]])
 

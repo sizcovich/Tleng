@@ -1,6 +1,7 @@
 from automata import *
 import string
 from collections import deque
+from construirDet import renombrarEstadosDet
 
 def clausuraLambda(estado, automataNoDet):
 	clausura = automataNoDet.Delta[estado]['lambda']
@@ -98,7 +99,7 @@ def determinizar(automataNoDet):
 
 	automataDet.setearInicial('q0')
 
-	#agrego aristas
+	# agrego aristas
 	for i in range(len(estados)):
 		for j in range(len(estados)):
 			if j in aristas[i]:
@@ -108,7 +109,7 @@ def determinizar(automataNoDet):
 						est2 = 'q' + str(j)
 						automataDet.setearArista(est1,est,est2)
 
-	#agrego estados finales
+	# agrego estados finales
 	for conj in valoresExistentes:
 		for est in conj:
 			if est in automataNoDet.F:
@@ -118,23 +119,23 @@ def determinizar(automataNoDet):
 							automataDet.agregarFinal(est1)
 							break
 
-	return renombrarEstados(nuevo)
-
-def minimizar(automata):	
-	# Mando todos los que no esten definidos al trampa
+	# mando todos los que no esten definidos al trampa
 	agregarTrampa = False
-	for estado in automata.Q:
-		if Set(automata.Delta[estado].keys()) != automata.Sigma:
+	for estado in automataDet.Q:
+		if Set(automataDet.Delta[estado].keys()) != automataDet.Sigma:
 			agregarTrampa = True
 			break
 
 	if agregarTrampa:
-		automata.agregarEstado('qT')
-		for estado in automata.Q:
-			for simbolo in automata.Sigma:
-				if not (simbolo in automata.Delta[estado]):
-					automata.Delta[estado][simbolo] = 'qT'
+		automataDet.agregarEstado('qT')
+		for estado in automataDet.Q:
+			for simbolo in automataDet.Sigma:
+				if not (simbolo in automataDet.Delta[estado]):
+					automataDet.Delta[estado][simbolo] = 'qT'
 
+	return renombrarEstadosDet(automataDet)
+
+def minimizar(automata):
 	ultimasClases = {}
 	ejes = {}
 	claseInicial = 'q0'
@@ -199,13 +200,13 @@ def minimizar(automata):
 	for clase in clasesFinales:
 		nuevo.agregarFinal(clase)
 
-	return renombrarEstados(nuevo)
+	return renombrarEstadosDet(nuevo)
 	
 def noAceptaNingunaCadena(automata):
 	visitados = Set()
-	queue = list()
+	queue = deque()
 
-	list.append(automata.q0)
+	queue.append(automata.q0)
 
 	while queue:
 		estado = queue.pop()
@@ -218,7 +219,7 @@ def noAceptaNingunaCadena(automata):
 		for simbolo in automata.Delta[estado]:
 			vecino = automata.Delta[estado][simbolo]
 
-			if not vecino in visitados:
+			if not vecino in visitados and not vecino in queue:
 					queue.append(vecino)
 
 	return True
