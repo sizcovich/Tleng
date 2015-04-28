@@ -1,2 +1,14 @@
 
 *.pyc
+
+*.in
+
+*.log
+
+*.out
+
+*.aux
+
+*.pdf
+
+*.toc

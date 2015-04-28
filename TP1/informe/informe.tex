@@ -135,6 +135,55 @@ Vita, Sebastián & 149/11 & sebastian\_vita@yahoo.com.ar\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Introducción}
+En el siguiente trabajo práctico, debimos diseñar e implementar un programa que permita la construcción y ejecución de Autómatas Finitos Determinísticos. Para ello, fue necesario implementar un parser capaz de generar un autómata finito a partir de un archivo con su expresión regular.\\
+Por otro lado, se nos solicitó determinizar el autómata generado, en el caso en el que no lo fuera. Por otra parte, debimos implementar el algoritmo de minimización visto en clase\footnote{dc.uba.ar/materias/tl/2015/c1/teoricas/clase4.pdf/view} para aplicarlo al autómata obtenido.
+
+Por último, debimos programar ciertas funciones adicionales. Éstas fueron:
+\begin{itemize}
+\item Dado un autómata finito determinístico y una cadena, definir si esta última pertenece al lenguaje del autómata.
+\item Dado un autómata finito determinístico, generar su grafo correspondiente en lenguaje DOT.
+\item Dados dos autómatas determinísticos, devolver la el autómata de intersección mínimo.
+\item Dado un autómata finito determinístico, obtener su complemento mínimo.
+\item Dados dos autómatas determinísticos, verificar su equivalencia.
+\end{itemize} 
+
+En lo que sigue, explicaremos detalles de la implementación.
+\newpage
+\section{Implementación}
+
+En primer lugar, debimos definir los autómatas. Para esto, creamos una clase para los autómatas determinísticos y otra para el caso de autómata no determinístico.\\
+\newline
+En un principio, se definió la clase \textit{AutomataDet} con su descripción correspondiente $<Q, \Sigma, \delta, S_0, F>$. El conjunto de estados, el alfabeto y el conjunto de estados finales fueron definidos con un Set\footnote{https://docs.python.org/2/library/sets.html}. La función de transición fue representada con un diccionario\footnote{https://docs.python.org/2/tutorial/datastructures.html\#dictionaries}.\\
+En la clase, definimos funciones necesarias para la realización de lo requerido. Entre ellas, se encuentran \textit{setearInicial} (que configura a un estado como el inicial), \textit{agregarEstado}, \textit{agregarFinal}, \textit{setearArista}, entre otras.\\
+\newline
+Luego, definimos la clase \textit{AutomataNoDet} con los mismos compuestos que la anterior, pero con el agregado de \textit{lambda} en $\Sigma$. Las funciones definidas en la clase fueron las mismas que para el caso de determinísticos.
+
+\subsection{De regex a autómata}
+Para crear un autómata a partir de una expresión regular, implementamos un algoritmo capaz de recorrer cada línea y determinar si contiene ${CONCAT}$, ${OR}$, ${STAR}$, ${PLUS}$, ${OPT}$ o $\\t$. En cada caso, se llama a la función constructora correspondiente, definida en \textit{construirNoDet.py}.\\
+\newline
+Para diferenciar los estados provenientes de uno u otro autómata, agregamos un ``-1'' o un ``-2'' a cada estado, dependiendo de su autómata de origen.\\
+\newline
+Nos resultó necesaria la implementación de una función \textbf{renombrarEstados} para mantener uniformidad en los autómatas y el correcto funcionamiento de nuestras funciones. Ésta utiliza una cola\footnote{https://docs.python.org/2/library/queue.html} para almacenar los estados a medida que se recorren.
+
+\subsection{Determinizar}
+Para la realización de una función capaz de transformar un autómata no determinístico en uno determinístico implementamos el algoritmo visto en clase.
+
+\subsection{Minimizar}
+
+\subsection{Cadena pertenece al lenguaje de un autómata}
+Dicha función se definió dentro de la clase \textit{AutomataDet}. La misma se limita a recorrer los símbolos de la cadena a través de las transiciones y si logra llegar a todos, devuelve \textbf{True}, caso contrario, devuelve \textbf{False}.
+
+\subsection{Generación del autómata en lenguaje DOT}
+
+\subsection{Intersección de autómatas}
+
+\subsection{Complemento de un autómata}
+
+\subsection{Equivalencia de autómatas}
+
+\newpage
+\section{Conclusión}
+Podemos concluir que
 
 
 \end{document}
