@@ -27,7 +27,7 @@ def construirComplemento(automata):
 
 	for estado in nuevo.Q:
 		for simbolo in nuevo.Sigma:
-			if simbolo in automata.Delta[estado]:
+			if (not agregarTrampa or estado != 'qT') and simbolo in automata.Delta[estado]:
 					nuevo.setearArista(estado, simbolo, automata.Delta[estado][simbolo])
 			else:
 				nuevo.Delta[estado][simbolo] = 'qT'

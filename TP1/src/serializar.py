@@ -1,7 +1,7 @@
 from sets import Set
 
 def exportarAArchivo(automata, archivo_automata):
-	archivo_automata.write(automata.toString())	
+	archivo_automata.write(automata.toString())
 
 def exportarADot(automata, archivo_dot):
 	archivo_dot.write("strict digraph {\n")
