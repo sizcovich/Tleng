@@ -155,6 +155,7 @@ En lo que sigue, explicaremos detalles de la implementación.
 En primer lugar, debimos definir los autómatas. Para esto, creamos una clase para los autómatas determinísticos y otra para el caso de autómatas no determinísticos.\\
 \newline
 En un principio, se definió la clase \textit{AutomataDet} con su descripción correspondiente $<Q, \Sigma, \delta, S_0, F>$. El conjunto de estados, el alfabeto y el conjunto de estados finales fueron definidos con un Set\footnote{https://docs.python.org/2/library/sets.html}. La función de transición fue representada con un diccionario\footnote{https://docs.python.org/2/tutorial/datastructures.html\#dictionaries}.\\
+\newline
 En la clase, definimos las funciones necesarias para la realización de lo requerido. Entre ellas, se encuentran \textit{setearInicial} (que configura a un estado como el inicial), \textit{agregarEstado}, \textit{agregarFinal}, \textit{setearArista}, entre otras.\\
 \newline
 Luego, definimos la clase \textit{AutomataNoDet} con los mismos compuestos que la anterior, pero con el agregado de \textit{lambda} en $\Sigma$. Las funciones implementadas en la clase fueron las mismas que para el caso de determinísticos.\\
@@ -175,12 +176,17 @@ Clausura-$\lambda$ (k) = \{r $\in$ Q $| \exists$ q $\in$ k $\land$ (q,$\lambda$)
 \end{itemize}
 
 \subsection{Minimizar}
-En la función de minimizar, se implementó el algoritmo visto en clase\footnote{http://dc.uba.ar/materias/tl/2015/c1/teoricas/clase4.pdf/view}. Para eso, se definieron los diccionarios \textit{ultimasClases} y \textit{ejes}.\\
+En la función de minimizar, se implementó el algoritmo visto en clase. Para eso, se definieron los diccionarios \textit{ultimasClases} y \textit{ejes}.\\
+\newline
 Para todos los estados, se los guardó como 'q1' en el caso en el que fueran finales y como 'q0' en el caso contrario.\\
 Luego, se declaró un diccionario \textit{tabla} para almacenar la transición de \textit{ultimasClases} en cada estado y para cada símbolo del autómata.\\
+\newline
 Más tarde, se recorren nuevamente los estados del autómata y se convierten los valores de la tabla a un string del tipo ``q0-q1-q2-q1'' a través de un $join$\footnote{$http://www.tutorialspoint.com/python/string\_join.htm$} de los valores de \textit{tabla} de ese estado, para luego poder hashear.\\
+\newline
 Luego de verificar que el estado no esté almacenado, se lo agrega al diccionario \textit{clases}, y su valor en \textit{tabla} es agregado en \textit{ejes}. Dichos estados son, más adelante, agregados como Estados del nuevo autómata generado, al igual que los símbolos obtenidos con sus aristas correspondientes declaradas en \textit{ejes}.\\
+\newline
 En el caso en el que se llegue al estado inicial o a alguno final, se los define como tales en \textit{claseInicial} o \textit{claseFinal} respectivamente.\\
+\newline
 De este modo, se configuran los estados del nuevo autómata minimal.
 
 \subsection{Cadena pertenece al lenguaje de un autómata}
@@ -188,20 +194,31 @@ Dicha función se definió dentro de la clase \textit{AutomataDet}. La misma se 
 
 \subsection{Generación del autómata en lenguaje DOT}
 La generación del autómata en lenguaje DOT se desarrolló a partir de la bibliografía propuesta por la cátedra. Para ello, la función elaborada recorre los símbolos pertenecientes a la transición de cada estado y almacena cada transición en el caso en el que pertenezca al diccionario \textit{ejes}, definido inicialmente. Caso contrario, almacena el símbolo en un Set.\\
+\newline
 Luego, escribe en $archivo\_dot$ los caracteres correspondientes al lenguaje DOT.
 
 \subsection{Intersección de autómatas}
 Para la intersección de autómatas. Comenzamos definiendo un nuevo autómata con $\Sigma$ = $\Sigma (automata1)$ U $\Sigma (automata2)$. Luego, se definieron los estados del nuevo autómata como la combinación de todos los estados del autómata1 con todos los del autómata2.\\
+\newline
 Por otro lado, se configuraron las aristas con las transiciones correspondientes al autómata1 unidas con las correspondientes al autómata 2, para la respectiva combinación de estados.\\
+\newline
+Por otra parte, se agregaron los estados ``q1-q2'' como finales cuando ``q1'' es final de automata1 y ``q2'' es final de automata2.\\
 Por último, se dispuso la asignación de las transiciones faltantes al estado trampa. Para esto, se recorrieron los estados y, en el caso en el que alguno de ellos no tuviera transición a otro, se lo asigna al \textit{trampa}.
 
 \subsection{Complemento de un autómata}
-El complemento se realizó creando un nuevo autómata con todos los estados del autómata original. En el caso en el que hubiera estados que no tuvieran transición a todos los demás, lo que equivale a pedir que no esté todo $\Sigma$ en la imagen de $\delta$, se agrega el estado \textit{Trampa}.\\
+El complemento se realizó creando un nuevo autómata con todos los estados del autómata original. En el caso en el que $\delta$(q, s) no estuviera definido para algún $q$ perteneciente a $Q$ y algún $s$ perteneciente a $\Sigma$, se agrega un estado $Trampa$, y se define $\delta$(q,s) para cada uno de estos pares estado-símbolo como $Trampa$.\\
+\newline
+En el caso de los estados finales, se definió como tales a los que no eran finales en el autómata original, incluyendo al trampa si es agregado al nuevo autómata.\\
+\newline
 Luego, se configuran las aristas faltantes al estados trampa.
 
 \subsection{Equivalencia de autómatas}
-Para verificar la equivalencia de autómatas, elaboramos la función \textit{noAceptaNingunaCadena} que utiliza el algoritmos DFS. Para eso, se recurrió a las estructuras $Set$ y $deque$\footnote{https://docs.python.org/2/library/collections.html\#collections.deque} para recorrer un autómata. Los estados se extraen con la función $pop$ y, para cada caso, se verifica si el mismo pertenece a los estados finales. Si esto ocurre se termina de recorrer y se devuelve False, caso contrario se agrega el estado al $Set$.\\
+Para verificar la equivalencia de autómatas, se realiza, en primer lugar, la intersección entre automata1 y complemento de automata2. Por definición de conjuntos, si automata1 y automata2 reconocen los mismos mensajes, esta intersección debería dar vacía. Entonces, verificamos que el lenguaje reconocido por este nuevo automata sea vacío.\\
+\newline
+Para esto último, elaboramos la función \textit{noAceptaNingunaCadena} que utiliza el algoritmos DFS. Para eso, se recurrió a las estructuras $Set$ y $deque$\footnote{https://docs.python.org/2/library/collections.html\#collections.deque} para recorrer un autómata. Los estados se extraen con la función $pop$ y, para cada caso, se verifica si el mismo pertenece a los estados finales. Si esto ocurre se termina de recorrer y se devuelve False, caso contrario se agrega el estado al $Set$.\\
+\newline
 Por último, se recorre cada símbolo del autómada y si no fue visitado se lo agrega a la $deque$.\\
+\newline
 Finalmente, se devuelve True.
 
 \newpage
