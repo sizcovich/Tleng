@@ -136,7 +136,7 @@ Vita, Sebastián & 149/11 & sebastian\_vita@yahoo.com.ar\\
 
 \section{Introducción}
 En el siguiente trabajo práctico, debimos diseñar e implementar un programa que permita la construcción y ejecución de Autómatas Finitos Determinísticos. Para ello, fue necesario implementar un parser capaz de generar un autómata finito a partir de un archivo con su expresión regular.\\
-Por otro lado, se nos solicitó determinizar el autómata generado, en el caso en el que no lo fuera. Por otra parte, debimos implementar el algoritmo de minimización visto en clase\footnote{dc.uba.ar/materias/tl/2015/c1/teoricas/clase4.pdf/view} para aplicarlo al autómata obtenido.
+Por otro lado, se nos solicitó determinizar el autómata generado, en el caso en el que no lo fuera. Por otra parte, debimos implementar la minimización de autómatas para aplicarlo al autómata obtenido.
 
 Por último, debimos programar ciertas funciones adicionales. Éstas fueron:
 \begin{itemize}
@@ -147,35 +147,47 @@ Por último, debimos programar ciertas funciones adicionales. Éstas fueron:
 \item Dados dos autómatas determinísticos, verificar su equivalencia.
 \end{itemize} 
 
+El lenguaje utilizado fue Python.
 En lo que sigue, explicaremos detalles de la implementación.
 \newpage
 \section{Implementación}
 
-En primer lugar, debimos definir los autómatas. Para esto, creamos una clase para los autómatas determinísticos y otra para el caso de autómata no determinístico.\\
+En primer lugar, debimos definir los autómatas. Para esto, creamos una clase para los autómatas determinísticos y otra para el caso de autómatas no determinísticos.\\
 \newline
 En un principio, se definió la clase \textit{AutomataDet} con su descripción correspondiente $<Q, \Sigma, \delta, S_0, F>$. El conjunto de estados, el alfabeto y el conjunto de estados finales fueron definidos con un Set\footnote{https://docs.python.org/2/library/sets.html}. La función de transición fue representada con un diccionario\footnote{https://docs.python.org/2/tutorial/datastructures.html\#dictionaries}.\\
-En la clase, definimos funciones necesarias para la realización de lo requerido. Entre ellas, se encuentran \textit{setearInicial} (que configura a un estado como el inicial), \textit{agregarEstado}, \textit{agregarFinal}, \textit{setearArista}, entre otras.\\
+En la clase, definimos las funciones necesarias para la realización de lo requerido. Entre ellas, se encuentran \textit{setearInicial} (que configura a un estado como el inicial), \textit{agregarEstado}, \textit{agregarFinal}, \textit{setearArista}, entre otras.\\
 \newline
-Luego, definimos la clase \textit{AutomataNoDet} con los mismos compuestos que la anterior, pero con el agregado de \textit{lambda} en $\Sigma$. Las funciones definidas en la clase fueron las mismas que para el caso de determinísticos.\\
+Luego, definimos la clase \textit{AutomataNoDet} con los mismos compuestos que la anterior, pero con el agregado de \textit{lambda} en $\Sigma$. Las funciones implementadas en la clase fueron las mismas que para el caso de determinísticos.\\
 \newline
-Para mejorar la claridad de los resultados, definimos la función \textit{renombrarEstados} para homogeneizar los autómatas obtenidos. Para esto, se utilizó una cola\footnote{https://docs.python.org/2/library/queue.html} para recorrer los estados y renombrarlos paulatinamente.
+Para mejorar la claridad de los resultados, utilizamos la función \textit{renombrarEstados} para lograr uniformidad en los autómatas obtenidos. Para esto, se utilizó una cola\footnote{https://docs.python.org/2/library/queue.html} para recorrer los estados y renombrarlos paulatinamente a través del algoritmo BFS\footnote{http://web.cse.ohio-state.edu/~gurari/course/cis680/cis680Ch14.html\#QQ1-46-92}.
 
 \subsection{De regex a autómata}
 Para crear un autómata a partir de una expresión regular, implementamos un algoritmo capaz de recorrer cada línea y determinar si contiene ${CONCAT}$, ${OR}$, ${STAR}$, ${PLUS}$, ${OPT}$ o $\\t$. En cada caso, se llama a la función constructora correspondiente, definida en \textit{construirNoDet.py}.\\
 \newline
-Para diferenciar los estados provenientes de uno u otro autómata, agregamos un ``-1'' o un ``-2'' a cada estado, dependiendo de su autómata de origen.\\
-\newline
-Nos resultó necesaria la implementación de una función \textbf{renombrarEstados} para mantener uniformidad en los autómatas y el correcto funcionamiento de nuestras funciones. Ésta utiliza una cola\footnote{https://docs.python.org/2/library/queue.html} para almacenar los estados a medida que se recorren.
+Para diferenciar los estados provenientes de uno u otro autómata, agregamos un ``-1'' o un ``-2'' a cada estado, dependiendo de su autómata de origen.
 
 \subsection{Determinizar}
-Para la realización de una función capaz de transformar un autómata no determinístico en uno determinístico implementamos el algoritmo visto en clase. Utilizamos las funciones \textit{mover} y \textit{clausura lambda}.
+Para la realización de una función capaz de transformar un autómata no determinístico en uno determinístico implementamos el algoritmo visto en clase. Utilizamos las funciones \textit{mover} y \textit{clausura lambda}:
+\begin{itemize}
+\item La función \textit{mover} realiza la unión de las transiciones y, luego, une las \textit{clausuraLambda} de las mismas.
+\item La función \textit{clausuraLambda} agrega la transición \textit{lambda} a los estados que no pertenecen a la clausura inicial.
+\end{itemize}
 
 \subsection{Minimizar}
+En la función de minimizar, se implementó el algoritmo visto en clase\footnote{http://dc.uba.ar/materias/tl/2015/c1/teoricas/clase4.pdf/view}. Para eso, se definieron los diccionarios \textit{ultimasClases} y \textit{ejes}.\\
+Para todos los estados, se los guardó como 'q1' en el caso en el que fueran finales y como 'q0' en el caso contrario.\\
+Luego, se declaró un diccionario \textit{tabla} para almacenar la transición de \textit{ultimasClases} en cada estado y para cada símbolo del autómata.\\
+Más tarde, se recorren nuevamente los estados del autómata y se convierten los valores de la tabla a un string del tipo ``q0-q1-q2-q1'' a través de un $join$\footnote{$http://www.tutorialspoint.com/python/string\_join.htm$} de los valores de \textit{tabla} de ese estado, para luego poder hashear.\\
+Luego de verificar que el estado no esté almacenado, se lo agrega al diccionario \textit{clases}, y su valor en \textit{tabla} es agregado en \textit{ejes}. Dichos estados son, más adelante, agregados como Estados del nuevo autómata generado, al igual que los símbolos obtenidos con sus aristas correspondientes declaradas en \textit{ejes}.\\
+En el caso en el que se llegue al estado inicial o a alguno final, se los define como tales en \textit{claseInicial} o \textit{claseFinal} respectivamente.\\
+De este modo, se configuran los estados del nuevo autómata minimal.
 
 \subsection{Cadena pertenece al lenguaje de un autómata}
 Dicha función se definió dentro de la clase \textit{AutomataDet}. La misma se limita a recorrer los símbolos de la cadena a través de las transiciones y si logra llegar a todos, devuelve \textbf{True}, caso contrario, devuelve \textbf{False}.
 
 \subsection{Generación del autómata en lenguaje DOT}
+La generación del autómata en lenguaje DOT se desarrolló a partir de la bibliografía propuesta por la cátedra. Para ello, la función elaborada recorre los símbolos pertenecientes a la transición de cada estado y almacena cada transición en el caso en el que pertenezca al diccionario \textit{ejes}, definido inicialmente. Caso contrario, almacena el símbolo en un Set.\\
+Luego, escribe en $archivo\_dot$ los caracteres correspondientes al lenguaje DOT.
 
 \subsection{Intersección de autómatas}
 Para la intersección de autómatas. Comenzamos definiendo un nuevo autómata con $\Sigma$ = $\Sigma (automata1)$ U $\Sigma (automata2)$. Luego, se definieron los estados del nuevo autómata como la combinación de todos los estados del autómata1 con todos los del autómata2.\\
@@ -187,10 +199,13 @@ El complemento se realizó creando un nuevo autómata con todos los estados del 
 Luego, se configuran las aristas faltantes al estados trampa.
 
 \subsection{Equivalencia de autómatas}
+Para verificar la equivalencia de autómatas, elaboramos la función \textit{noAceptaNingunaCadena} que utiliza $Set$ y $deque$\footnote{https://docs.python.org/2/library/collections.html\#collections.deque} para recorrer un autómata. Los estados se extraen con la función $pop$ y, para cada caso, se verifica si el mismo pertenece a los estados finales. Si esto ocurre se devuelve False, caso contrario se agrega el estado al $Set$.\\
+Por último, se recorre cada símbolo del autómada y si no fue visitado se lo agrega a la $deque$.\\
+Finalmente, se devuelve True.
 
 \newpage
 \section{Conclusión}
-Podemos concluir que
+Luego de haber implementado el pasaje de Regex a Autómata Finito, de Autómata Finito No Determinístico a Autómata Finito Determinístico y de AFD a Autómata Mínimal en Python, podemos concluir que la utilización de Sets y Diccionarios resulta adecuada para la correcta representación de autómatas. Dichas estructuras facilitaron la programación de las funciones de pertenencia, de generación de grafo DOT, de intersección, de complemento, como también de equivalencia, que se resolvió aplicando el algoritmo de BFS.
 
 
 \end{document}
