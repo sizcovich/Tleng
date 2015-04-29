@@ -2,14 +2,11 @@
 #!/usr/bin/python
 
 from parsear import importarDeRegex
-from algoritmos import *
+from algoritmos import determinizar, minimizar
 from serializar import exportarAArchivo
 
-def afd_minimo(archivo_regex, archivo_automata, minimize):
+def afd_minimo(archivo_regex, archivo_automata):
 	automata = importarDeRegex(archivo_regex)
-	automata = determinizar(automata)
-
-	if minimize:
-		automata = minimizar(automata)
-
+	automata = determinizar(automata)	
+	automata = minimizar(automata)
 	exportarAArchivo(automata, archivo_automata)

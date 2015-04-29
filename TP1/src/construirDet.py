@@ -54,8 +54,8 @@ def construirInterseccion(automata1, automata2):
 
 	# mando todos los que no esten definidos al trampa
 	agregarTrampa = False
-	for estado in automataDet.Q:
-		if Set(automataDet.Delta[estado].keys()) != automataDet.Sigma:
+	for estado in nuevo.Q:
+		if Set(nuevo.Delta[estado].keys()) != nuevo.Sigma:
 			agregarTrampa = True
 			break
 
@@ -64,7 +64,7 @@ def construirInterseccion(automata1, automata2):
 		for estado in nuevo.Q:
 			for simbolo in nuevo.Sigma:
 				if not (simbolo in nuevo.Delta[estado]):
-					automataDet.Delta[estado][simbolo] = 'qT'
+					nuevo.Delta[estado][simbolo] = 'qT'
 
 	return renombrarEstadosDet(nuevo)
 	

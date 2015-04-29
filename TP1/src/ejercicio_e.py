@@ -8,8 +8,5 @@ from algoritmos import minimizar
 
 def complemento(archivo_automata_in, archivo_automata_out):
 	automata = importarDeArchivo(archivo_automata_in)
-	complemento = complementar(automata)
+	complemento = minimizar(construirComplemento(automata))
 	exportarAArchivo(complemento, archivo_automata_out)
-
-def complementar(automata):	
-	return minimizar(construirComplemento(automata))

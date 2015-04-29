@@ -1,5 +1,6 @@
 from construirNoDet import *
 from automata import AutomataDet
+import sys
 
 def importarDeRegex(archivo_regex):
 	try:		

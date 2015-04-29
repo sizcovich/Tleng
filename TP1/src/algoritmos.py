@@ -1,7 +1,7 @@
 from automata import *
+from construirDet import *
 import string
 from collections import deque
-from construirDet import renombrarEstadosDet
 
 def clausuraLambda(estado, automataNoDet):
 	clausura = automataNoDet.Delta[estado]['lambda']
@@ -201,6 +201,9 @@ def minimizar(automata):
 		nuevo.agregarFinal(clase)
 
 	return renombrarEstadosDet(nuevo)
+	
+def equivalencia(automata1, automata2):
+	return noAceptaNingunaCadena(minimizar(construirInterseccion(automata1, construirComplemento(automata2))))
 	
 def noAceptaNingunaCadena(automata):
 	visitados = Set()
