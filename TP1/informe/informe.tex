@@ -200,13 +200,13 @@ El complemento se realizó creando un nuevo autómata con todos los estados del 
 Luego, se configuran las aristas faltantes al estados trampa.
 
 \subsection{Equivalencia de autómatas}
-Para verificar la equivalencia de autómatas, elaboramos la función \textit{noAceptaNingunaCadena} que utiliza $Set$ y $deque$\footnote{https://docs.python.org/2/library/collections.html\#collections.deque} para recorrer un autómata. Los estados se extraen con la función $pop$ y, para cada caso, se verifica si el mismo pertenece a los estados finales. Si esto ocurre se devuelve False, caso contrario se agrega el estado al $Set$.\\
+Para verificar la equivalencia de autómatas, elaboramos la función \textit{noAceptaNingunaCadena} que utiliza el algoritmos DFS. Para eso, se recurrió a las estructuras $Set$ y $deque$\footnote{https://docs.python.org/2/library/collections.html\#collections.deque} para recorrer un autómata. Los estados se extraen con la función $pop$ y, para cada caso, se verifica si el mismo pertenece a los estados finales. Si esto ocurre se termina de recorrer y se devuelve False, caso contrario se agrega el estado al $Set$.\\
 Por último, se recorre cada símbolo del autómada y si no fue visitado se lo agrega a la $deque$.\\
 Finalmente, se devuelve True.
 
 \newpage
 \section{Conclusión}
-Luego de haber implementado el pasaje de Regex a Autómata Finito, de Autómata Finito No Determinístico a Autómata Finito Determinístico y de AFD a Autómata Mínimal en Python, podemos concluir que la utilización de Sets y Diccionarios resulta adecuada para la correcta representación de autómatas. Dichas estructuras facilitaron la programación de las funciones de pertenencia, de generación de grafo DOT, de intersección, de complemento, como también de equivalencia, que se resolvió aplicando el algoritmo de BFS.
+Luego de haber implementado el pasaje de Regex a Autómata Finito, de Autómata Finito No Determinístico a Autómata Finito Determinístico y de AFD a Autómata Mínimal en Python, podemos concluir que la utilización de Sets y Diccionarios resulta adecuada para la correcta representación de autómatas. Dichas estructuras facilitaron la programación de las funciones de pertenencia, de generación de grafo DOT, de intersección, de complemento, como también de equivalencia, que se resolvió aplicando el algoritmo de DFS.
 
 
 \end{document}
