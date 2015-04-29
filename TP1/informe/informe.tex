@@ -167,10 +167,11 @@ Para crear un autómata a partir de una expresión regular, implementamos un alg
 Para diferenciar los estados provenientes de uno u otro autómata, agregamos un ``-1'' o un ``-2'' a cada estado, dependiendo de su autómata de origen.
 
 \subsection{Determinizar}
-Para la realización de una función capaz de transformar un autómata no determinístico en uno determinístico implementamos el algoritmo visto en clase. Utilizamos las funciones \textit{mover} y \textit{clausura lambda}:
+Para la realización de una función capaz de transformar un autómata no determinístico en uno determinístico implementamos el algoritmo visto en clase. Para esto, utilizamos las funciones \textit{mover} y \textit{clausura lambda}:
 \begin{itemize}
-\item La función \textit{mover} realiza la unión de las transiciones y, luego, une las \textit{clausuraLambda} de las mismas.
-\item La función \textit{clausuraLambda} agrega la transición \textit{lambda} a los estados que no pertenecen a la clausura inicial.
+\item La función \textit{mover} toma un símbolo y un conjunto de estados. En primer lugar, crea un conjunto con todos los estados a los que se llega partiendo de un estado del conjunto inicial y moviendose por una transición del símbolo pasado por parámetro. Luego, calcúla la \textit{clausuraLambda} de cada uno de los estados del conjunto resultante.
+\item La función \textit{clausuraLambda} devuelve todos los estados a los que se puede llegar partiendo de uno determinado y moviendome por transiciones \textit{lambda}. Esto es:
+Clausura-$\lambda$ (k) = \{r $\in$ Q $| \exists$ q $\in$ k $\land$ (q,$\lambda$) $\vdash^{*}$ (r,$\lambda$)\}
 \end{itemize}
 
 \subsection{Minimizar}
