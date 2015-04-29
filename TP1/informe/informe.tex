@@ -198,7 +198,11 @@ La generación del autómata en lenguaje DOT se desarrolló a partir de la bibli
 Luego, escribe en $archivo\_dot$ los caracteres correspondientes al lenguaje DOT.
 
 \subsection{Intersección de autómatas}
-Para la intersección de autómatas. Comenzamos definiendo un nuevo autómata con $\Sigma$ = $\Sigma (automata1)$ U $\Sigma (automata2)$. Luego, se definieron los estados del nuevo autómata como la combinación de todos los estados del autómata1 con todos los del autómata2.\\
+Para la intersección de autómatas, utilizamos la siguiente definición: Sean A y B dos autómatas. Los estados de la intersección van a ser los pares de los estados de A y B, o sea Estados$(A \cap B)$ = Estados(A)$x$Estados(B). El estado inicial será ($q0_A$,$q0_B$) y los finales $F(A\cap B)=F(A)xF(B)$. Finalmente, la función de transición $\lambda(A\cap B)$ se define como sigue: para cualquier $\alpha \in \Sigma$ y $p_1, p_2\ \in$ Estados(A), $q_1, q_2\ \in$ Estados(B):
+
+$$\langle p_1,q_1\rangle \xrightarrow[A\cap B]{\alpha}\langle p_2,q_2\rangle \ sii\ p_1\xrightarrow[A]{\alpha}p_2\ y\ q_1\xrightarrow[B]{\alpha}q_2$$
+
+Para implementar esto, comenzamos definiendo un nuevo autómata con $\Sigma$ = $\Sigma (automata1)$ U $\Sigma (automata2)$. Luego, se definieron los estados del nuevo autómata como la combinación de todos los estados del autómata1 con todos los del autómata2.\\
 \newline
 Por otro lado, se configuraron las aristas con las transiciones correspondientes al autómata1 unidas con las correspondientes al autómata 2, para la respectiva combinación de estados.\\
 \newline
