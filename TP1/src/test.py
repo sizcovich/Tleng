@@ -89,10 +89,10 @@ if __name__ == "__main__":
 	automata1.setearArista('q0', 'a', 'q2')
 	
 	complemento = minimizar(construirComplemento(automata1))
-	cadena = 'a' #cadena valida en automata1
-	pertenece_al_lenguaje(automata1, cadena) # imprime True
-	pertenece_al_lenguaje(complemento, cadena) # imprime False
-	
-	cadena = 'b' #cadena invalida en automata1
-	pertenece_al_lenguaje(automata1, cadena) # imprime False
-	pertenece_al_lenguaje(complemento, cadena) # imprime True
+	cadena = 'b' #cadena valida en automata1
+	print (automata1.acepta(cadena) == True)
+	print (complemento.acepta(cadena) == False)
+
+	cadena = 'a' #cadena invalida en automata1
+	print (automata1.acepta(cadena) == False)
+	print (complemento.acepta(cadena) == True)
