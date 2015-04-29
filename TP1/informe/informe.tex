@@ -169,8 +169,9 @@ Para diferenciar los estados provenientes de uno u otro autómata, agregamos un 
 \subsection{Determinizar}
 Para la realización de una función capaz de transformar un autómata no determinístico en uno determinístico implementamos el algoritmo visto en clase. Utilizamos las funciones \textit{mover} y \textit{clausura lambda}:
 \begin{itemize}
-\item La función \textit{mover} realiza la unión de las transiciones y, luego, une las \textit{clausuraLambda} de las mismas.
-\item La función \textit{clausuraLambda} agrega la transición \textit{lambda} a los estados que no pertenecen a la clausura inicial.
+\item La función \textit{mover} permite trasladarse de un conjunto de estados a otro transitando por algún símbolo. Para esto, realiza la unión de las transiciones y, luego, une las \textit{clausuraLambda} de las mismas.
+\item La función \textit{clausuraLambda} devuelve los estadosa a los que se puede llegar a partir de uno determinado. Esto es:
+Clausura-$\lambda$ (k) = \{r $\in$ Q $| \exists$ q $\in$ k $\land$ (q,$\lambda$) $\vdash^{*}$ (r,$\lambda$)\}
 \end{itemize}
 
 \subsection{Minimizar}
