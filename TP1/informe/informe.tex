@@ -198,32 +198,28 @@ La generación del autómata en lenguaje DOT se desarrolló a partir de la bibli
 Luego, escribe en $archivo\_dot$ los caracteres correspondientes al lenguaje DOT.
 
 \subsection{Intersección de autómatas}
-Para la intersección de autómatas, utilizamos la siguiente definición: Sean A y B dos autómatas. Los estados de la intersección van a ser los pares de los estados de A y B, o sea Estados$(A \cap B)$ = Estados(A)$x$Estados(B). El estado inicial será ($q0_A$,$q0_B$) y los finales $F(A\cap B)=F(A)xF(B)$. Finalmente, la función de transición $\lambda(A\cap B)$ se define como sigue: para cualquier $\alpha \in \Sigma$ y $p_1, p_2\ \in$ Estados(A), $q_1, q_2\ \in$ Estados(B):
 
-$$\langle p_1,q_1\rangle \xrightarrow[A\cap B]{\alpha}\langle p_2,q_2\rangle \ sii\ p_1\xrightarrow[A]{\alpha}p_2\ y\ q_1\xrightarrow[B]{\alpha}q_2$$
+Para la intersección de autómatas, utilizamos la siguiente definición: Sean A y B dos autómatas. El alfabeto de la intersección será la unión de $\Sigma_A y \Sigma_B$ y los estados van a ser los pares de los estados de A y B, es decir $Q_{A \cap B} = Q_A \times Q_B$. El estado inicial será $\langle q0_A,q0_B \rangle$ y los finales $F_{A \cap B} = F_A \times F_B$. Finalmente, la función de transición $\delta(A\cap B)$ se define como sigue: para cualquier $\alpha \in \Sigma$ y $p_1, p_2\ \in Q_A, q_1, q_2\ \in Q_B$:
 
-Para implementar esto, comenzamos definiendo un nuevo autómata con $\Sigma$ = $\Sigma (automata1)$ U $\Sigma (automata2)$. Luego, se definieron los estados del nuevo autómata como la combinación de todos los estados del autómata1 con todos los del autómata2.\\
-\newline
-Por otro lado, se configuraron las aristas con las transiciones correspondientes al autómata1 unidas con las correspondientes al autómata 2, para la respectiva combinación de estados.\\
-\newline
-Por otra parte, se agregaron los estados ``q1-q2'' como finales cuando ``q1'' es final de automata1 y ``q2'' es final de automata2.\\
-Por último, se dispuso la asignación de las transiciones faltantes al estado trampa. Para esto, se recorrieron los estados y, en el caso en el que alguno de ellos no tuviera transición a otro, se lo asigna al \textit{trampa}.
+$$\langle p_1,q_1\rangle \xrightarrow[A\cap B]{\alpha}\langle p_2,q_2\rangle \ \Leftrightarrow \ p_1\xrightarrow[A]{\alpha}p_2\ y\ q_1\xrightarrow[B]{\alpha}q_2$$
+
+
+Para implementar el algoritmo de intersección, nos basamos textualmente en la definición, con la salvedad de que para los pares de estados utilizamos la concatenación de los nombres de los mismos, es decir, si $ Q_A = \lbrace q1 \rbrace$ y $Q_B = \lbrace q1, q2 \rbrace $ entonces nuestro conjunto de estados quedaría $Q_{A \cap B} = \lbrace$ $q1$-$q1$,$q1$-$q2$ $\rbrace$.
+
+Como la definición supone autómatas completos, en los casos en los que quede $\delta$ sin definir para algún par $q \in Q_{A \cap B}, s \in \Sigma_{A \cap B}$, agregamos un estado adicional $qT$, al que asignaremos $\delta$ de todos los pares sin definir.
 
 \subsection{Complemento de un autómata}
-El complemento se realizó creando un nuevo autómata con todos los estados del autómata original. En el caso en el que $\delta$(q, s) no estuviera definido para algún $q$ perteneciente a $Q$ y algún $s$ perteneciente a $\Sigma$, se agrega un estado $Trampa$, y se define $\delta$(q,s) para cada uno de estos pares estado-símbolo como $Trampa$.\\
-\newline
-En el caso de los estados finales, se definió como tales a los que no eran finales en el autómata original, incluyendo al trampa si es agregado al nuevo autómata.\\
-\newline
-Luego, se configuran las aristas faltantes al estados trampa.
+
+La definición de complemento es muy sencilla: Sea A un autómata. El complemento de A es otro automata con igual alfabeto, estados, estado inicial y función de transición. La única diferencia es que los estados finales del complemento son los estados que no son finales en A.
+
+La implementación es igual de sencilla, con la misma excepción que en la intersección: supone autómatas completos. Como el algoritmo no sabe si el autómata que recibe como entrada es completo, verifica si no lo es, y en tal caso agrega el estado adicional $qT$ (que también va a ser parte de los estados finales) mencionado en el algortimo de intersección.
 
 \subsection{Equivalencia de autómatas}
-Para verificar la equivalencia de autómatas, se realiza, en primer lugar, la intersección entre automata1 y complemento de automata2. Por definición de conjuntos, si automata1 y automata2 reconocen los mismos mensajes, esta intersección debería dar vacía. Entonces, verificamos que el lenguaje reconocido por este nuevo automata sea vacío.\\
-\newline
-Para esto último, elaboramos la función \textit{noAceptaNingunaCadena} que utiliza el algoritmos DFS. Para eso, se recurrió a las estructuras $Set$ y $deque$\footnote{https://docs.python.org/2/library/collections.html\#collections.deque} para recorrer un autómata. Los estados se extraen con la función $pop$ y, para cada caso, se verifica si el mismo pertenece a los estados finales. Si esto ocurre se termina de recorrer y se devuelve False, caso contrario se agrega el estado al $Set$.\\
-\newline
-Por último, se recorre cada símbolo del autómada y si no fue visitado se lo agrega a la $deque$.\\
-\newline
-Finalmente, se devuelve True.
+
+La definición de equivalencia de automátas dice que dados dos autómatas A y B, estos son equivalentes $\Leftrightarrow \mathcal{L}($A$) = \mathcal{L}($B$)$. Notamos que por definiciones de conjuntos $\mathcal{L}($A$) = \mathcal{L}($B$) \Leftrightarrow \mathcal{L}($A$) \cap \mathcal{L}($B$)^\complement = \emptyset$.
+
+Entonces procedimos a realizar la intersección entre uno de los autómatas y el complemento del otro.
+Por último, verificamos que el lenguaje que esta intersección reconocía sea vacía. Para esto, elaboramos una función que verifica que ningun estado final sea alcanzable desde el estado inicial (utilizando $Depth-First Search$), y en caso de que sea asi, devuelve Verdadero.
 
 \newpage
 \section{Conclusión}
