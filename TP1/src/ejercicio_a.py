@@ -10,3 +10,5 @@ def afd_minimo(archivo_regex, archivo_automata):
 	automata = determinizar(automata)	
 	automata = minimizar(automata)
 	exportarAArchivo(automata, archivo_automata)
+
+	
