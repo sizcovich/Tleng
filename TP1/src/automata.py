@@ -59,6 +59,7 @@ class AutomataDet(object):
 	def acepta(self, cadena):
 		if self.q0 is None:
 			sys.exit("El automata no tiene definido un estado inicial.")
+
 		estadoActual = 	self.q0;		
 		for simbolo in cadena:
 			if not (simbolo in self.Delta[estadoActual]):
@@ -125,4 +126,4 @@ class AutomataNoDet(object):
 			for rel in self.Delta[estado]:
 				res += '%s\t%s\t%s\n' % (estado, rel if rel != '\t' else '\\t', str(list(self.Delta[estado][rel])))
 
-		return res		
+		return res

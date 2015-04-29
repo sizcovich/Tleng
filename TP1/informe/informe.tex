@@ -154,13 +154,13 @@ En lo que sigue, explicaremos detalles de la implementación.
 
 En primer lugar, debimos definir los autómatas. Para esto, creamos una clase para los autómatas determinísticos y otra para el caso de autómatas no determinísticos.\\
 \newline
-En un principio, se definió la clase \textit{AutomataDet} con su descripción correspondiente $<Q, \Sigma, \delta, S_0, F>$. El conjunto de estados, el alfabeto y el conjunto de estados finales fueron definidos con un Set\footnote{https://docs.python.org/2/library/sets.html}. La función de transición fue representada con un diccionario\footnote{https://docs.python.org/2/tutorial/datastructures.html\#dictionaries}.\\
+En un principio, se definió la clase \textit{AutomataDet} con su descripción correspondiente $<Q, \Sigma, \delta, S_0, F>$. El conjunto de estados, el alfabeto y el conjunto de estados finales fueron definidos con un Set\footnote{https://docs.python.org/2/library/sets.html}. La función de transición fue representada con un diccionario\footnote{https://docs.python.org/2/tutorial/datastructures.html\#dictionaries} de diccionarios. La clave del primero son los estados, y sus valores son diccionarios cuya clave son los simbolos del alfabeto, y el valor son el estado al que se llega utilizando esa transición.\\
 \newline
-En la clase, definimos las funciones necesarias para la realización de lo requerido. Entre ellas, se encuentran \textit{setearInicial} (que configura a un estado como el inicial), \textit{agregarEstado}, \textit{agregarFinal}, \textit{setearArista}, entre otras.\\
+En la clase, definimos funciones necesarias para la realización de lo requerido, que incluyen validaciones para conservar la consistencia del mismo. Entre ellas, se encuentran \textit{setearInicial} (que configura a un estado como el inicial), \textit{agregarEstado}, \textit{agregarFinal} (agrega un estado al conjunto de estados finales), \textit{setearArista}, entre otras.\\
 \newline
-Luego, definimos la clase \textit{AutomataNoDet} con los mismos compuestos que la anterior, pero con el agregado de \textit{lambda} en $\Sigma$. Las funciones implementadas en la clase fueron las mismas que para el caso de determinísticos.\\
+Tambien, definimos la clase \textit{AutomataNoDet} con los mismos componentes que la anterior, pero con el agregado de \textit{lambda} en $\Sigma$ y la diferencia de que la funcion de transicion devuelve conjuntos de estados, en lugar de estados. Las funciones implementadas en la clase fueron las mismas que para el caso de determinísticos.\\
 \newline
-Para mejorar la claridad de los resultados, utilizamos la función \textit{renombrarEstados} para lograr uniformidad en los autómatas obtenidos. Para esto, se utilizó una cola\footnote{https://docs.python.org/2/library/queue.html} para recorrer los estados y renombrarlos paulatinamente a través del algoritmo BFS\footnote{http://web.cse.ohio-state.edu/~gurari/course/cis680/cis680Ch14.html\#QQ1-46-92}.
+Para mejorar la claridad de los resultados, creamos la función \textit{renombrarEstados} para lograr uniformidad en los nombres de los estados de los autómatas creados. En el mismo, recorremos el grafo subyacente haciendo $Breadth-First Search$, y asignandole a cada estado un nuevo numero, correspondiente al orden que le toque en la recorrida.
 
 \subsection{Pasaje de expresión regular a autómata}
 
@@ -172,7 +172,7 @@ Para el caso de las operaciones, se realiza llamado recursivo para obtener el au
 
 \subsubsection{Determinizar}
 
-Para la realización de una función capaz de transformar un autómata no determinístico en uno determinístico implementamos el algoritmo visto en clase. Para esto, utilizamos las funciones \textit{mover} y \textit{clausura lambda}:
+Para la realización de una función capaz de transformar un autómata no determinístico en uno determinístico implementamos el algoritmo visto en clase. Para esto, definimos las funciones \textit{mover} y \textit{clausura lambda}:
 \begin{itemize}
 \item La función \textit{mover} toma un símbolo y un conjunto de estados. En primer lugar, crea un conjunto con todos los estados a los que se llega partiendo de un estado del conjunto inicial y moviéndose por una transición del símbolo pasado por parámetro. Luego, calcula la \textit{clausuraLambda} de cada uno de los estados del conjunto resultante.
 \item La función \textit{clausuraLambda} devuelve todos los estados a los que se puede llegar partiendo de uno determinado y moviéndose por transiciones \textit{lambda}. Esto es:
@@ -181,7 +181,7 @@ Clausura-$\lambda$ (k) = \{r $\in$ Q $| \exists$ q $\in$ k $\land$ (q,$\lambda$)
 
 \subsubsection{Minimizar}
 
-En la función de minimizar, se implementó el algoritmo tambien visto en clase. Para eso, se definieron los diccionarios \textit{ultimasClases} y \textit{ejes}.\\
+En la función de minimizar, tambien se implementó el algoritmo visto en clase. Para eso, se definieron los diccionarios \textit{ultimasClases} y \textit{ejes}.\\
 \newline
 Para todos los estados, se los guardó como 'q1' en el caso en el que fueran finales y como 'q0' en el caso contrario.\\
 Luego, se declaró un diccionario \textit{tabla} para almacenar la transición de \textit{ultimasClases} en cada estado y para cada símbolo del autómata.\\
@@ -235,7 +235,10 @@ Por último, verificamos que el lenguaje que esta intersección reconocía sea v
 
 \newpage
 \section{Conclusión}
-Luego de haber implementado el pasaje de Regex a Autómata Finito, de Autómata Finito No Determinístico a Autómata Finito Determinístico y de AFD a Autómata Mínimal en Python, podemos concluir que la utilización de Sets y Diccionarios resulta adecuada para la correcta representación de autómatas. Dichas estructuras facilitaron la programación de las funciones de pertenencia, de generación de grafo DOT, de intersección, de complemento, como también de equivalencia, que se resolvió aplicando el algoritmo de DFS.
+
+Luego de haber realizado toda la implementación en Python, llegamos a la conclusión de que es un lenguaje muy ameno para la construccion de autómatas. Los Sets y Diccionarios nos proveyeron de gran facilidad para la manipulacion de los estados y las transiciones, y la verbosidad del lenguaje hace que los algoritmos sean faciles de seguir.
+
+No nos encontramos con grandes dificultades para implementar los algoritmos, y creemos que haber definido adecuadamente nuestras clases \textit{AutomataDet} y \textit{AutomataNoDet} nos dio una buena base sobre la cual construir los mismos.
 
 
 \end{document}
