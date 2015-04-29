@@ -162,12 +162,16 @@ Luego, definimos la clase \textit{AutomataNoDet} con los mismos compuestos que l
 \newline
 Para mejorar la claridad de los resultados, utilizamos la función \textit{renombrarEstados} para lograr uniformidad en los autómatas obtenidos. Para esto, se utilizó una cola\footnote{https://docs.python.org/2/library/queue.html} para recorrer los estados y renombrarlos paulatinamente a través del algoritmo BFS\footnote{http://web.cse.ohio-state.edu/~gurari/course/cis680/cis680Ch14.html\#QQ1-46-92}.
 
-\subsection{De regex a autómata}
-Para crear un autómata a partir de una expresión regular, implementamos un algoritmo capaz de recorrer cada línea y determinar si contiene ${CONCAT}$, ${OR}$, ${STAR}$, ${PLUS}$, ${OPT}$ o $\\t$. En cada caso, se llama a la función constructora correspondiente, definida en \textit{construirNoDet.py}.\\
-\newline
-Para diferenciar los estados provenientes de uno u otro autómata, agregamos un ``-1'' o un ``-2'' a cada estado, dependiendo de su autómata de origen.
+\subsection{Pasaje de expresión regular a autómata}
 
-\subsection{Determinizar}
+\subsubsection{Construcción de AFND-$\lambda$ en base al regex}
+
+Para la construccion del autómata realizamos una implementación recursiva, basada en la demostración inductiva de que para toda expresion regular, existe un AFND-$\lambda$ que reconoce el mismo lenguaje. Esta tiene como caso base el autómata que reconoce un único símbolo, y es el caso base para nuestra recursión. 
+
+Para el caso de las operaciones, se realiza llamado recursivo para obtener el autómata del siguiente nivel del árbol de expresión, y luego se realiza la operación correspondiente con el mismo (concatenación, unión, clausura de Kleene, clausura positiva u opcionalidad). Para cada una de estas realizamos la construcción descripta en la demostración mencionada.
+
+\subsubsection{Determinizar}
+
 Para la realización de una función capaz de transformar un autómata no determinístico en uno determinístico implementamos el algoritmo visto en clase. Para esto, utilizamos las funciones \textit{mover} y \textit{clausura lambda}:
 \begin{itemize}
 \item La función \textit{mover} toma un símbolo y un conjunto de estados. En primer lugar, crea un conjunto con todos los estados a los que se llega partiendo de un estado del conjunto inicial y moviéndose por una transición del símbolo pasado por parámetro. Luego, calcula la \textit{clausuraLambda} de cada uno de los estados del conjunto resultante.
@@ -175,8 +179,9 @@ Para la realización de una función capaz de transformar un autómata no determ
 Clausura-$\lambda$ (k) = \{r $\in$ Q $| \exists$ q $\in$ k $\land$ (q,$\lambda$) $\vdash^{*}$ (r,$\lambda$)\}
 \end{itemize}
 
-\subsection{Minimizar}
-En la función de minimizar, se implementó el algoritmo visto en clase. Para eso, se definieron los diccionarios \textit{ultimasClases} y \textit{ejes}.\\
+\subsubsection{Minimizar}
+
+En la función de minimizar, se implementó el algoritmo tambien visto en clase. Para eso, se definieron los diccionarios \textit{ultimasClases} y \textit{ejes}.\\
 \newline
 Para todos los estados, se los guardó como 'q1' en el caso en el que fueran finales y como 'q0' en el caso contrario.\\
 Luego, se declaró un diccionario \textit{tabla} para almacenar la transición de \textit{ultimasClases} en cada estado y para cada símbolo del autómata.\\
@@ -189,13 +194,20 @@ En el caso en el que se llegue al estado inicial o a alguno final, se los define
 \newline
 De este modo, se configuran los estados del nuevo autómata minimal.
 
-\subsection{Cadena pertenece al lenguaje de un autómata}
-Dicha función se definió dentro de la clase \textit{AutomataDet}. La misma se limita a recorrer los símbolos de la cadena a través de las transiciones y si logra llegar a todos, devuelve \textbf{True}, caso contrario, devuelve \textbf{False}.
+
+\subsection{Pertenencia de una cadena al lenguaje de un autómata}
+
+Esta función se limita a consumir los símbolos de la cadena para moverse por los estados a través de las transiciones.
+
+En caso de que se termine la cadena y se esté en un estado que pertenece al conjunto de finales, devuelve \textbf{True}. Si hay algún símbolo de la cadena que no pueda ser consumido (porque no esté definida $\delta$ para ese símbolo en el estado en el que se encuentre, ya que podría no estar completo), o el estado al que se llega cuando se consumen todos los símbolos no perteneces a los finales, devuelve \textbf{False}.
 
 \subsection{Generación del autómata en lenguaje DOT}
-La generación del autómata en lenguaje DOT se desarrolló a partir de la bibliografía propuesta por la cátedra. Para ello, la función elaborada recorre los símbolos pertenecientes a la transición de cada estado y almacena cada transición en el caso en el que pertenezca al diccionario \textit{ejes}, definido inicialmente. Caso contrario, almacena el símbolo en un Set.\\
-\newline
-Luego, escribe en $archivo\_dot$ los caracteres correspondientes al lenguaje DOT.
+
+La generación del autómata en lenguaje DOT se desarrolló basada en el ejemplo provisto por el enunciado. 
+
+Para ello, se define como nodos con doble circulo a los estados finales, y como nodos con simple circulo para todos los demas. Después se le setea una flecha apuntando al estado inicial.
+
+Por último, para cada par de estados que esten unidos por una transición, se setea una flecha apuntando de uno al otro, que tiene como etiqueta cada uno de los símbolos a traves de los cuales se realiza esa transición.
 
 \subsection{Intersección de autómatas}
 
@@ -216,10 +228,10 @@ La implementación es igual de sencilla, con la misma excepción que en la inter
 
 \subsection{Equivalencia de autómatas}
 
-La definición de equivalencia de automátas dice que dados dos autómatas A y B, estos son equivalentes $\Leftrightarrow \mathcal{L}($A$) = \mathcal{L}($B$)$. Notamos que por definiciones de conjuntos $\mathcal{L}($A$) = \mathcal{L}($B$) \Leftrightarrow \mathcal{L}($A$) \cap \mathcal{L}($B$)^\complement = \emptyset$.
+La definición de equivalencia de automátas dice que dados dos autómatas A y B, estos son equivalentes $\Leftrightarrow \mathcal{L}($A$) = \mathcal{L}($B$)$. Notamos que por definiciones de conjuntos $\mathcal{L}($A$) = \mathcal{L}($B$) \Leftrightarrow \mathcal{L}($A$) \cap \mathcal{L}($B$)^\mathsf{c} = \emptyset$.
 
 Entonces procedimos a realizar la intersección entre uno de los autómatas y el complemento del otro.
-Por último, verificamos que el lenguaje que esta intersección reconocía sea vacía. Para esto, elaboramos una función que verifica que ningun estado final sea alcanzable desde el estado inicial (utilizando $Depth-First Search$), y en caso de que sea asi, devuelve Verdadero.
+Por último, verificamos que el lenguaje que esta intersección reconocía sea vacía. Para esto, elaboramos una función que verifica que ningun estado final sea alcanzable desde el estado inicial (utilizando $Depth-First Search$ en el grafo subyacente), y en caso de que sea asi, devuelve \textbf{True}.
 
 \newpage
 \section{Conclusión}
