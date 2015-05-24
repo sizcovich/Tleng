@@ -83,7 +83,7 @@ def construirOr(automata1, automata2):
 def construirStar(automata):
 	nuevo = construirPlus(automata)
 
-	for estado in automata.Q:
+	for estado in nuevo.F:
 		nuevo.agregarArista(nuevo.q0, 'lambda', estado)
 
 	return nuevo
@@ -115,7 +115,7 @@ def construirPlus(automata):
 
 def construirOpt(automata):
 	nuevo = AutomataNoDet(automata.Sigma)
-
+	
 	for estado in automata.Q:
 		nuevo.agregarEstado(estado)
 
@@ -123,14 +123,15 @@ def construirOpt(automata):
 	
 	for estado in automata.F:
 		nuevo.agregarFinal(estado)
-		nuevo.agregarArista(nuevo.q0, 'lambda', estado)
 		
+	nuevo.agregarFinal(automata.q0)
+	
 	for estado in automata.Q:
 		for simbolo in automata.Sigma:
 			for estado2 in automata.Delta[estado][simbolo]:
 				nuevo.agregarArista(estado, simbolo, estado2)
 
-	return automata
+	return nuevo
 
 def renombrarEstadosNoDet(automata):
 	nuevo = AutomataNoDet(automata.Sigma)

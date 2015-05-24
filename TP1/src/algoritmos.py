@@ -203,7 +203,9 @@ def minimizar(automata):
 	return renombrarEstadosDet(nuevo)
 	
 def equivalencia(automata1, automata2):
-	return noAceptaNingunaCadena(minimizar(construirInterseccion(automata1, construirComplemento(automata2))))
+	ida = noAceptaNingunaCadena(minimizar(construirInterseccion(automata1, construirComplemento(automata2))))
+	vuelta = noAceptaNingunaCadena(minimizar(construirInterseccion(automata2, construirComplemento(automata1))))
+	return ida and vuelta
 	
 def noAceptaNingunaCadena(automata):
 	visitados = Set()

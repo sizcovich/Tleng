@@ -8,7 +8,8 @@ def exportarADot(automata, archivo_dot):
 	archivo_dot.write("rankdir=LR;\n")
 	archivo_dot.write("node [shape = none, label = \"\", width = 0, height = 0]; qd;\n")
 	archivo_dot.write("node [label = \"\N\", width = 0.5, height = 0.5];\n")
-	archivo_dot.write("node [shape = doublecircle]; %s;\n" % " ".join(automata.F))
+	if automata.F:
+		archivo_dot.write("node [shape = doublecircle]; %s;\n" % " ".join(automata.F))
 	archivo_dot.write("node [shape = circle];\n")
 	archivo_dot.write("qd -> %s\n" % automata.q0)
 
