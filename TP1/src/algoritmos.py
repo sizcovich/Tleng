@@ -203,8 +203,13 @@ def minimizar(automata):
 	return renombrarEstadosDet(nuevo)
 	
 def equivalencia(automata1, automata2):
-	ida = noAceptaNingunaCadena(minimizar(construirInterseccion(automata1, construirComplemento(automata2))))
-	vuelta = noAceptaNingunaCadena(minimizar(construirInterseccion(automata2, construirComplemento(automata1))))
+	automata1.Sigma = automata1.Sigma | automata2.Sigma
+	automata2.Sigma = automata1.Sigma
+	comp1 = construirComplemento(automata1)
+	comp2 = construirComplemento(automata2)
+	
+	ida = noAceptaNingunaCadena(minimizar(construirInterseccion(automata1, comp2)))
+	vuelta = noAceptaNingunaCadena(minimizar(construirInterseccion(automata2, comp1)))
 	return ida and vuelta
 	
 def noAceptaNingunaCadena(automata):
