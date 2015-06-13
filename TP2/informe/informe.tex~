@@ -1,0 +1,244 @@
+\documentclass[a4paper, 10pt, twoside]{article}
+
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish, es-ucroman, es-noquoting]{babel}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{enumitem} % Provee macro \setlist
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{xspace}
+\usepackage{qtree}
+\usepackage[toc, page]{appendix}
+
+
+%%%%%%%%%% Constantes - Inicio %%%%%%%%%%
+\newcommand{\titulo}{Trabajo Práctico 1}
+\newcommand{\materia}{Teoría de Lenguajes}
+\newcommand{\integrantes}{Allocati · Izcovich · Vita}
+\newcommand{\cuatrimestre}{Primer Cuatrimestre de 2015}
+%%%%%%%%%% Constantes - Fin %%%%%%%%%%
+
+
+%%%%%%%%%% Configuración de Fancyhdr - Inicio %%%%%%%%%%
+\pagestyle{fancy}
+\thispagestyle{fancy}
+\lhead{\titulo\ · \materia}
+\rhead{\integrantes}
+\renewcommand{\footrulewidth}{0.4pt}
+\cfoot{\thepage /\pageref{LastPage}}
+
+\fancypagestyle{caratula} {
+   \fancyhf{}
+   \cfoot{\thepage /\pageref{LastPage}}
+   \renewcommand{\headrulewidth}{0pt}
+   \renewcommand{\footrulewidth}{0pt}
+}
+%%%%%%%%%% Configuración de Fancyhdr - Fin %%%%%%%%%%
+
+
+%%%%%%%%%% Miscelánea - Inicio %%%%%%%%%%
+% Evita que el documento se estire verticalmente para ocupar el espacio vacío
+% en cada página.
+\raggedbottom
+
+% Separación entre párrafos.
+\setlength{\parskip}{0.5em}
+
+% Separación entre elementos de listas.
+\setlist{itemsep=0.5em}
+
+% Asigna la traducción de la palabra 'Appendices'.
+\renewcommand{\appendixtocname}{Apéndices}
+\renewcommand{\appendixpagename}{Apéndices}
+
+\newcommand{\grafico}[1]{
+  \begin{center}
+    \includegraphics[height=10cm]{#1}
+  \end{center}
+}
+
+
+%%%%%%%%%% Miscelánea - Fin %%%%%%%%%%
+
+\begin{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Carátula                                                                  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\thispagestyle{caratula}
+
+\begin{center}
+
+\includegraphics[height=2cm]{DC.png} 
+\hfill
+\includegraphics[height=2cm]{UBA.jpg} 
+
+\vspace{2cm}
+
+Departamento de Computación,\\
+Facultad de Ciencias Exactas y Naturales,\\
+Universidad de Buenos Aires
+
+\vspace{4cm}
+
+\begin{Huge}
+\titulo
+\end{Huge}
+
+\vspace{0.5cm}
+
+\begin{Large}
+\materia
+\end{Large}
+
+\vspace{1cm}
+
+\cuatrimestre
+
+\vspace{4cm}
+
+\begin{tabular}{|c|c|c|}
+\hline
+Apellido y Nombre & LU & E-mail\\
+\hline
+Allocati, Federico  & 682/11 & fede.allocati@gmail.com\\
+Izcovich, Sabrina & 550/11 & sizcovich@gmail.com\\
+Vita, Sebastián & 149/11 & sebastian\_vita@yahoo.com.ar\\
+\hline
+\end{tabular}
+
+\end{center}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Introducción                                                              %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introducción}
+En el siguiente trabajo práctico, debimos diseñar e implementar un programa que permita la construcción y ejecución de Autómatas Finitos Determinísticos. Para ello, fue necesario implementar un parser capaz de generar un autómata finito a partir de un archivo con su expresión regular.\\
+Por otro lado, se nos solicitó determinizar el autómata generado, en el caso en el que no lo fuera. Por otra parte, debimos implementar la minimización de autómatas para aplicarlo al autómata obtenido.
+
+Por último, debimos programar ciertas funciones adicionales. Éstas fueron:
+\begin{itemize}
+\item Dado un autómata finito determinístico y una cadena, definir si esta última pertenece al lenguaje del autómata.
+\item Dado un autómata finito determinístico, generar su grafo correspondiente en lenguaje DOT.
+\item Dados dos autómatas determinísticos, devolver la el autómata de intersección mínimo.
+\item Dado un autómata finito determinístico, obtener su complemento mínimo.
+\item Dados dos autómatas determinísticos, verificar su equivalencia.
+\end{itemize} 
+
+El lenguaje utilizado fue Python.
+En lo que sigue, explicaremos detalles de la implementación.
+\newpage
+\section{Implementación}
+
+En primer lugar, debimos definir los autómatas. Para esto, creamos una clase para los autómatas determinísticos y otra para el caso de autómatas no determinísticos.\\
+\newline
+En un principio, se definió la clase \textit{AutomataDet} con su descripción correspondiente $<Q, \Sigma, \delta, S_0, F>$. El conjunto de estados, el alfabeto y el conjunto de estados finales fueron definidos con un Set\footnote{https://docs.python.org/2/library/sets.html}. La función de transición fue representada con un diccionario\footnote{https://docs.python.org/2/tutorial/datastructures.html\#dictionaries} de diccionarios. La clave del primero son los estados, y sus valores son diccionarios cuya clave son los simbolos del alfabeto, y el valor son el estado al que se llega utilizando esa transición.\\
+\newline
+En la clase, definimos funciones necesarias para la realización de lo requerido, que incluyen validaciones para conservar la consistencia del mismo. Entre ellas, se encuentran \textit{setearInicial} (que configura a un estado como el inicial), \textit{agregarEstado}, \textit{agregarFinal} (agrega un estado al conjunto de estados finales), \textit{setearArista}, entre otras.\\
+\newline
+Tambien, definimos la clase \textit{AutomataNoDet} con los mismos componentes que la anterior, pero con el agregado de \textit{lambda} en $\Sigma$ y la diferencia de que la funcion de transicion devuelve conjuntos de estados, en lugar de estados. Las funciones implementadas en la clase fueron las mismas que para el caso de determinísticos.\\
+\newline
+Para mejorar la claridad de los resultados, creamos la función \textit{renombrarEstados} para lograr uniformidad en los nombres de los estados de los autómatas creados. En el mismo, recorremos el grafo subyacente haciendo $Breadth-First Search$, y asignandole a cada estado un nuevo numero, correspondiente al orden que le toque en la recorrida.
+
+\subsection{Pasaje de expresión regular a autómata}
+
+\subsubsection{Construcción de AFND-$\lambda$ en base al regex}
+
+Para la construccion del autómata realizamos una implementación recursiva, basada en la demostración inductiva de que para toda expresion regular, existe un AFND-$\lambda$ que reconoce el mismo lenguaje. Esta tiene como caso base el autómata que reconoce un único símbolo, y es el caso base para nuestra recursión. 
+
+Para el caso de las operaciones, se realiza llamado recursivo para obtener el autómata del siguiente nivel del árbol de expresión, y luego se realiza la operación correspondiente con el mismo (concatenación, unión, clausura de Kleene, clausura positiva u opcionalidad). Para cada una de estas realizamos la construcción descripta en la demostración mencionada.
+
+\subsubsection{Determinizar}
+
+Para la realización de una función capaz de transformar un autómata no determinístico en uno determinístico implementamos el algoritmo visto en clase. Para esto, definimos las funciones \textit{mover} y \textit{clausura lambda}:
+\begin{itemize}
+\item La función \textit{mover} toma un símbolo y un conjunto de estados. En primer lugar, crea un conjunto con todos los estados a los que se llega partiendo de un estado del conjunto inicial y moviéndose por una transición del símbolo pasado por parámetro. Luego, calcula la \textit{clausuraLambda} de cada uno de los estados del conjunto resultante.
+\item La función \textit{clausuraLambda} devuelve todos los estados a los que se puede llegar partiendo de uno determinado y moviéndose por transiciones \textit{lambda}. Esto es:
+Clausura-$\lambda$ (k) = \{r $\in$ Q $| \exists$ q $\in$ k $\land$ (q,$\lambda$) $\vdash^{*}$ (r,$\lambda$)\}
+\end{itemize}
+
+\subsubsection{Minimizar}
+
+En la función de minimizar, tambien se implementó el algoritmo visto en clase. Para eso, se definieron los diccionarios \textit{ultimasClases} y \textit{ejes}.\\
+\newline
+Para todos los estados, se los guardó como 'q1' en el caso en el que fueran finales y como 'q0' en el caso contrario.\\
+Luego, se declaró un diccionario \textit{tabla} para almacenar la transición de \textit{ultimasClases} en cada estado y para cada símbolo del autómata.\\
+\newline
+Más tarde, se recorren nuevamente los estados del autómata y se convierten los valores de la tabla a un string del tipo ``q0-q1-q2-q1'' a través de un $join$\footnote{$http://www.tutorialspoint.com/python/string\_join.htm$} de los valores de \textit{tabla} de ese estado, para luego poder hashear.\\
+\newline
+Luego de verificar que el estado no esté almacenado, se lo agrega al diccionario \textit{clases}, y su valor en \textit{tabla} es agregado en \textit{ejes}. Dichos estados son, más adelante, agregados como Estados del nuevo autómata generado, al igual que los símbolos obtenidos con sus aristas correspondientes declaradas en \textit{ejes}.\\
+\newline
+En el caso en el que se llegue al estado inicial o a alguno final, se los define como tales en \textit{claseInicial} o \textit{claseFinal} respectivamente.\\
+\newline
+De este modo, se configuran los estados del nuevo autómata minimal.
+
+
+\subsection{Pertenencia de una cadena al lenguaje de un autómata}
+
+Esta función se limita a consumir los símbolos de la cadena para moverse por los estados a través de las transiciones.
+
+En caso de que se termine la cadena y se esté en un estado que pertenece al conjunto de finales, devuelve \textbf{True}. Si hay algún símbolo de la cadena que no pueda ser consumido (porque no esté definida $\delta$ para ese símbolo en el estado en el que se encuentre, ya que podría no estar completo), o el estado al que se llega cuando se consumen todos los símbolos no perteneces a los finales, devuelve \textbf{False}.
+
+\subsection{Generación del autómata en lenguaje DOT}
+
+La generación del autómata en lenguaje DOT se desarrolló basada en el ejemplo provisto por el enunciado. 
+
+Para ello, se define como nodos con doble circulo a los estados finales, y como nodos con simple circulo para todos los demas. Después se le setea una flecha apuntando al estado inicial.
+
+Por último, para cada par de estados que esten unidos por una transición, se setea una flecha apuntando de uno al otro, que tiene como etiqueta cada uno de los símbolos a traves de los cuales se realiza esa transición.
+
+\subsection{Intersección de autómatas}
+
+Para la intersección de autómatas, utilizamos la siguiente definición: Sean A y B dos autómatas. El alfabeto de la intersección será la unión de $\Sigma_A y \Sigma_B$ y los estados van a ser los pares de los estados de A y B, es decir $Q_{A \cap B} = Q_A \times Q_B$. El estado inicial será $\langle q0_A,q0_B \rangle$ y los finales $F_{A \cap B} = F_A \times F_B$. Finalmente, la función de transición $\delta(A\cap B)$ se define como sigue: para cualquier $\alpha \in \Sigma$ y $p_1, p_2\ \in Q_A, q_1, q_2\ \in Q_B$:
+
+$$\langle p_1,q_1\rangle \xrightarrow[A\cap B]{\alpha}\langle p_2,q_2\rangle \ \Leftrightarrow \ p_1\xrightarrow[A]{\alpha}p_2\ y\ q_1\xrightarrow[B]{\alpha}q_2$$
+
+
+Para implementar el algoritmo de intersección, nos basamos textualmente en la definición, con la salvedad de que para los pares de estados utilizamos la concatenación de los nombres de los mismos, es decir, si $ Q_A = \lbrace q1 \rbrace$ y $Q_B = \lbrace q1, q2 \rbrace $ entonces nuestro conjunto de estados quedaría $Q_{A \cap B} = \lbrace$ $q1$-$q1$,$q1$-$q2$ $\rbrace$.
+
+Como la definición supone autómatas completos, en los casos en los que quede $\delta$ sin definir para algún par $q \in Q_{A \cap B}, s \in \Sigma_{A \cap B}$, agregamos un estado adicional $qT$, al que asignaremos $\delta$ de todos los pares sin definir.
+
+\subsection{Complemento de un autómata}
+
+La definición de complemento es muy sencilla: Sea A un autómata. El complemento de A es otro automata con igual alfabeto, estados, estado inicial y función de transición. La única diferencia es que los estados finales del complemento son los estados que no son finales en A.
+
+La implementación es igual de sencilla, con la misma excepción que en la intersección: supone autómatas completos. Como el algoritmo no sabe si el autómata que recibe como entrada es completo, verifica si no lo es, y en tal caso agrega el estado adicional $qT$ (que también va a ser parte de los estados finales) mencionado en el algortimo de intersección.
+
+\subsection{Equivalencia de autómatas}
+
+La definición de equivalencia de automátas dice que dados dos autómatas A y B, estos son equivalentes $\Leftrightarrow \mathcal{L}($A$) = \mathcal{L}($B$)$. Notamos que por definiciones de conjuntos $\mathcal{L}($A$) = \mathcal{L}($B$) \Leftrightarrow \mathcal{L}($A$) \cap \mathcal{L}($B$)^\mathsf{c} = \emptyset$.
+
+Entonces procedimos a realizar la intersección entre uno de los autómatas y el complemento del otro.
+Por último, verificamos que el lenguaje que esta intersección reconocía sea vacía. Para esto, elaboramos una función que verifica que ningun estado final sea alcanzable desde el estado inicial (utilizando $Depth-First Search$ en el grafo subyacente), y en caso de que sea asi, devuelve \textbf{True}.
+
+\newpage
+\section{Conclusión}
+
+Luego de haber realizado toda la implementación en Python, llegamos a la conclusión de que es un lenguaje muy ameno para la construccion de autómatas. Los Sets y Diccionarios nos proveyeron de gran facilidad para la manipulacion de los estados y las transiciones, y la verbosidad del lenguaje hace que los algoritmos sean faciles de seguir.
+
+No nos encontramos con grandes dificultades para implementar los algoritmos, y creemos que haber definido adecuadamente nuestras clases \textit{AutomataDet} y \textit{AutomataNoDet} nos dio una buena base sobre la cual construir los mismos.
+
+
+\end{document}
