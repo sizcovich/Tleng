@@ -5,9 +5,9 @@ tokens = [
    'REPEAT',
    'NOTE',
    'SILENCE',
-   'FIGURE',
+   'FIG',
    'TONE',
-   'NUMBER',   
+   'NUM',   
    'CONST',
    'CONST_ID',
    'NUMERAL',
@@ -24,7 +24,7 @@ tokens = [
 figures = set(['redonda', 'blanca', 'negra', 'corchea', 'semicorchea', 'fusa', 'semifusa'])
 tones = set(['do', 're', 'mi', 'fa', 'sol', 'la', 'si', 'do+', 're+', 'fa+', 'sol+', 'la+', 're-', 'mi-', 'sol-', 'la-', 'si-'])
 
-def t_NUMBER(token):
+def t_NUM(token):
     r"[0-9][0-9]*"
     token.value = int(token.value)
     return token
@@ -42,7 +42,7 @@ def t_CONST_ID(token):
     if token.value == 'tempo':
         token.type = 'TEMPO'
     elif token.value in figures:
-        token.type = 'FIGURE'
+        token.type = 'FIG'
     elif token.value in tones:
         token.type = 'TONE'
     elif token.value == 'compas':
