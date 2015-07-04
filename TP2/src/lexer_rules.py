@@ -4,7 +4,6 @@ tokens = [
    'VOICE',
    'REPEAT',
    'NOTE',
-   'ALTERATION',
    'SILENCE',
    'FIGURE',
    'TONE',
@@ -29,7 +28,15 @@ def t_NUMBER(token):
     r"[0-9][0-9]*"
     token.value = int(token.value)
     return token
-   
+
+def t_TONE_WITH_ALTERATION(token):
+    r"[_a-zA-Z][_a-zA-Z0-9]*(\+|\-)"
+    if token.value in tones:
+        token.type = 'TONE'
+        return token
+    else:
+        raise Exception(token.value + "no es una altura reconocida.")
+
 def t_CONST_ID(token):
     r"[_a-zA-Z][_a-zA-Z0-9]*"
     if token.value == 'tempo':
@@ -54,8 +61,6 @@ def t_CONST_ID(token):
 def t_NEWLINE(token):
   r"\n+"
   token.lexer.lineno += len(token.value)
-
-t_ALTERATION = r"\+|\-"  
 
 t_NUMERAL = r"\#"
 t_SLASH = r"/"
