@@ -21,7 +21,8 @@ tokens = [
    'COMMA'
 ]
 
-figures = set(['redonda', 'blanca', 'negra', 'corchea', 'semicorchea', 'fusa', 'semifusa'])
+figures = { 'redonda' : 1, 'blanca' : 2, 'negra' : 4, 'corchea' : 8, 'semicorchea' : 16, 'fusa' : 32, 'semifusa' : 64 }
+figures_inv = { v: k for k, v in figures.items() }
 tones = set(['do', 're', 'mi', 'fa', 'sol', 'la', 'si', 'do+', 're+', 'fa+', 'sol+', 'la+', 're-', 'mi-', 'sol-', 'la-', 'si-'])
 
 def t_NUM(token):
@@ -43,6 +44,7 @@ def t_CONST_ID(token):
         token.type = 'TEMPO'
     elif token.value in figures:
         token.type = 'FIG'
+        token.value = figures[token.value]
     elif token.value in tones:
         token.type = 'TONE'
     elif token.value == 'compas':
@@ -57,7 +59,11 @@ def t_CONST_ID(token):
         token.type = 'SILENCE'
 
     return token
-   
+
+def t_IGNORE_COMMENTS(token):
+    r"//(.*?)\r?\n"
+    token.lexer.lineno += 1
+    
 def t_NEWLINE(token):
   r"\n+"
   token.lexer.lineno += len(token.value)
@@ -72,7 +78,7 @@ t_LBRACE = r"\{"
 t_RBRACE = r"\}"
 t_COMMA = r","
 
-t_ignore_comments = r"//(.*?)\r?\n"
+
 t_ignore = " \t"
 
 def t_error(token):

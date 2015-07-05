@@ -1,7 +1,7 @@
 import lexer_rules
 import parser_rules
 
-from sys import argv, exit
+from sys import argv, exit, stdout
 
 from ply.lex import lex
 from ply.yacc import yacc
@@ -52,4 +52,4 @@ if __name__ == "__main__":
         dump_ast(ast, output_file)
         output_file.close()
     else:
-        dump_ast(lexer, stdout)
+        dump_ast(ast, stdout)
