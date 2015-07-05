@@ -1,3 +1,5 @@
+from parser_exceptions import SyntacticException
+
 tokens = [
    'TEMPO',
    'BAR',
@@ -36,7 +38,7 @@ def t_TONE_WITH_ALTERATION(token):
         token.type = 'TONE'
         return token
     else:
-        raise Exception(token.value + "no es una altura reconocida.")
+        raise SyntacticException(token.value + "no es una altura reconocida.")
 
 def t_CONST_ID(token):
     r"[_a-zA-Z][_a-zA-Z0-9]*"
@@ -49,6 +51,8 @@ def t_CONST_ID(token):
         token.type = 'TONE'
     elif token.value == 'compas':
         token.type = 'BAR'
+    elif token.value == 'voz':
+        token.type = 'VOICE'
     elif token.value == 'repetir':
         token.type = 'REPEAT'
     elif token.value == 'const':
@@ -87,4 +91,4 @@ def t_error(token):
     message += "\nvalue:" + str(token.value)
     message += "\nline:" + str(token.lineno)
     message += "\nposition:" + str(token.lexpos)
-    raise Exception(message)
+    raise SyntacticException(message)
