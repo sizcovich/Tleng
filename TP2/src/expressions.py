@@ -1,6 +1,7 @@
 from parser_exceptions import SemanticException
 
-figures = { 'redonda' : 1., 'blanca' : 2., 'negra' : 4., 'corchea' : 8., 'semicorchea' : 16., 'fusa' : 32., 'semifusa' : 64. }
+figures = { 'redonda' : 1, 'blanca' : 2, 'negra' : 4, 'corchea' : 8, 'semicorchea' : 16, 'fusa' : 32, 'semifusa' : 64 }
+american = { 'do' : 'c', 're' : 'd', 'mi' : 'e', 'fa' : 'f', 'sol' : 'g', 'la' : 'a', 'si' : 'b', 'do+' : 'c+', 're+' : 'd+', 'fa+' : 'f+', 'sol+' : 'g+', 'la+' : 'a+', 're-' : 'd-', 'mi-' : 'e-', 'sol-' : 'g-', 'la-' : 'a-', 'si-' : 'b-' }
 
 class Song(object):
     def __init__(self, tempo, time_signature, voices):
@@ -28,21 +29,24 @@ class Tempo(object):
         self.per_minute = per_minute
 
 class TimeSignature(object):
-    def __init__(self, num_beats, beat_length, line_num):
-        if num_beats < 1:
+    def __init__(self, beats_per_bar, beat_length, line_num):
+        if beats_per_bar < 1:
             raise SemanticException("El nominador de la indicacion de compas debe ser mayor a cero. Linea: {0}.".format(line_num))
 
         if beat_length not in figures.values():
             raise SemanticException("El denominador de la indicacion de compas debe indicar una figura valida. Linea: {0}.".format(line_num))
         
-        self.num_beats = num_beats
+        self.beats_per_bar = beats_per_bar
         self.beat_length = beat_length
 
     def relative_length(self):
-        return self.num_beats * (1. / self.beat_length)
+        return self.beats_per_bar * (1. / self.beat_length)
 
 class Voice(object):
     def __init__(self, instrument, content, line_num):
+        if instrument > 127:
+            raise SemanticException("El numero instrumento de una voz debe estar entre 0 y 127. Linea: {0}.".format(line_num))
+
         self.instrument = instrument
         self.content = content
         self.line_num = line_num
@@ -95,6 +99,9 @@ class Note(object):
     def relative_length(self):
         return self.figure.relative_length()
 
+    def american_tone_with_octave(self):
+        return american[self.tone] + str(self.octave)
+
 class Silence(object):
     def __init__(self, figure, line_num):        
         self.figure = figure
@@ -107,8 +114,11 @@ class Figure(object):
     def __init__(self, name, line_num):     
         self.dotted = name.endswith('.')
         self.name = name.rstrip('.')
+        self.value = figures[self.name]
         self.line_num = line_num
 
-    def relative_length(self):
-        value = figures[self.name]
-        return (1. / value) + (1. / (value * 2) if self.dotted else 0)
+    def relative_length(self):        
+        return (1. / self.value) + (1. / (self.value * 2) if self.dotted else 0)
+        
+    def clicks(self, clicks_per_beat, beat_length):
+        return ((384 * beat_length) / self.value) + ((384 * beat_length) / (self.value * 2) if self.dotted else 0)

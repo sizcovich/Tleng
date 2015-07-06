@@ -9,13 +9,10 @@ const grand_piano = 0;
 
 voz (grand_piano)
 {
-    repetir (2)
+    compas
     {
-        compas
-        {
-            nota(do, octava, blanca);
-            nota(re, octava, blanca);
-        }
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
     }
 	compas
 	{

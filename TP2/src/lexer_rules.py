@@ -42,8 +42,7 @@ def t_TONE_WITH_ALTERATION(token):
 def t_FIG_WITH_DOT(token):
     r"[a-z][a-z]*(\.)"
     if token.value in figures:
-        token.type = 'FIG'
-        token.value = token.value
+        token.type = 'FIG'        
         return token
     else:    
         t_error(token)
@@ -54,7 +53,6 @@ def t_CONST_ID(token):
         token.type = 'TEMPO'
     elif token.value in figures:
         token.type = 'FIG'
-        token.value = token.value
     elif token.value in tones:
         token.type = 'TONE'
     elif token.value == 'compas':
