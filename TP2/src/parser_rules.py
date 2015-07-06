@@ -11,7 +11,7 @@ def p_song_declaration(subexpressions):
 
 def p_tempo(subexpressions):
     'tempo : NUMERAL TEMPO FIG NUM'
-    subexpressions[0] = Tempo(Figure(subexpressions[3]), subexpressions[4], subexpressions.lineno(1))
+    subexpressions[0] = Tempo(Figure(subexpressions[3], subexpressions.lineno(1)), subexpressions[4], subexpressions.lineno(1))
 
 def p_time_signature(subexpressions):
     'time_signature : NUMERAL BAR NUM SLASH NUM'
@@ -57,46 +57,35 @@ def p_num_or_const_id_from_const_id(subexpressions):
 
 def p_voice_content_non_empty(subexpressions):
     'voice_content : bar_or_repeat'
-    subexpressions[0] = subexpressions[1]
+    subexpressions[0] = [ subexpressions[1] ]
 
 def p_voice_content_append(subexpressions):
     'voice_content : bar_or_repeat voice_content'
-    subexpressions[0] = subexpressions[1] + subexpressions[2]
+    subexpressions[0] = [ subexpressions[1] ] + subexpressions[2]
     
 def p_bar_or_repeat_from_bar(subexpressions):
     'bar_or_repeat : BAR LBRACE bar_content RBRACE'
-    bar = Bar(subexpressions[3], subexpressions.lineno(1))
-    
-    if bar.relative_length() != time_signature.relative_length():
-        raise SemanticException("Un compas debe durar lo que se indico en el encabezado. Linea: {0}.".format(subexpressions.lineno(1)))
-    
-    subexpressions[0] = [ bar ]
+    subexpressions[0] = Bar(subexpressions[3], subexpressions.lineno(1))
     
 def p_bar_or_repeat_from_repeat(subexpressions):
     'bar_or_repeat : REPEAT LPAREN num_or_const_id RPAREN LBRACE voice_content RBRACE'
-    
-    repetitions = subexpressions[3]
-        
-    if repetitions < 2:
-        raise SemanticException("El valor de una repeticion debe ser al menos 2. Linea: {0}.".format(subexpressions.lineno(1)))
-    
-    subexpressions[0] = subexpressions[6] * repetitions
+    subexpressions[0] = Repeat(subexpressions[3], subexpressions[6], subexpressions.lineno(1))
 
 def p_bar_content_from_note(subexpressions):
     'bar_content : NOTE LPAREN TONE COMMA num_or_const_id COMMA FIG RPAREN SEMICOLON'
-    subexpressions[0] = [ Note(subexpressions[3], subexpressions[5], Figure(subexpressions[7]), subexpressions.lineno(1)) ]
+    subexpressions[0] = [ Note(subexpressions[3], subexpressions[5], Figure(subexpressions[7], subexpressions.lineno(1)), subexpressions.lineno(1)) ]
 
 def p_bar_content_from_silence(subexpressions):
     'bar_content : SILENCE LPAREN FIG RPAREN SEMICOLON'
-    subexpressions[0] = [ Silence(Figure(subexpressions[3]), subexpressions.lineno(1)) ]
+    subexpressions[0] = [ Silence(Figure(subexpressions[3], subexpressions.lineno(1)), subexpressions.lineno(1)) ]
 
 def p_bar_content_append_note(subexpressions):
     'bar_content : NOTE LPAREN TONE COMMA num_or_const_id COMMA FIG RPAREN SEMICOLON bar_content'
-    subexpressions[0] = [ Note(subexpressions[3], subexpressions[5], Figure(subexpressions[7]), subexpressions.lineno(1)) ] + subexpressions[10]
+    subexpressions[0] = [ Note(subexpressions[3], subexpressions[5], Figure(subexpressions[7], subexpressions.lineno(1)), subexpressions.lineno(1)) ] + subexpressions[10]
 
 def p_bar_content_append_silence(subexpressions):
     'bar_content : SILENCE LPAREN FIG RPAREN SEMICOLON bar_content'
-    subexpressions[0] = [ Silence(Figure(subexpressions[3]), subexpressions.lineno(1)) ] + subexpressions[6]    
+    subexpressions[0] = [ Silence(Figure(subexpressions[3], subexpressions.lineno(1)), subexpressions.lineno(1)) ] + subexpressions[6]    
     
 def p_error(token):
     message = "Valor no esperado: \"{0}\". Linea: {1}. Posicion: {2}.".format(token.value, token.lineno, token.lexpos)    

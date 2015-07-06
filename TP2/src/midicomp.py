@@ -14,7 +14,7 @@ def dump_song(song, output_file):
     output_file.write('ts: %d/%d\n' % (song.time_signature.num_beats, song.time_signature.beat_length))
     i = 1
     for voice in song.voices:        
-        output_file.write('voice %d: instrument %d. bars: %d\n' % (i, voice.instrument, len(voice.content)))
+        output_file.write('voice %d: instrument %d. bars: %d\n' % (i, voice.instrument, len(voice.get_bar_executions())))
         i = i + 1
 
 if __name__ == "__main__":
