@@ -1,0 +1,102 @@
+// 60 redondas por minuto, osea cada redonda dura 1 seg.
+#tempo negra 176
+// compas de 2 tiempos y cada tiempo dura 1/2 redonda (1 blanca).
+// entonces cada compas puede tener 1 redonda, 2 blancas, 4 negras, etc.
+#compas 3/4
+
+const octava = 4;
+const grand_piano = 0;
+
+// Tonicas y quintas
+voz (grand_piano)
+{
+    repetir (2)
+    {
+        repetir (2)
+        {
+            compas
+            {
+                nota(mi, octava, negra);
+                nota(si, octava, negra);
+                nota(si, octava, negra);
+            }
+        }
+        repetir (2)
+        {
+            compas
+            {
+                nota(la, octava, negra);
+                nota(mi, octava, negra);
+                nota(mi, octava, negra);
+            }
+        }
+    }
+    repetir (2)
+    {
+        repetir (2)
+        {
+            compas
+            {
+                nota(fa, octava, negra);
+                nota(do, octava, negra);
+                nota(do, octava, negra);
+            }
+        }
+        repetir (2)
+        {
+            compas
+            {
+                nota(do, octava, negra);
+                nota(la, octava, negra);
+                nota(la, octava, negra);
+            }
+        }
+    }
+}
+
+// Terceras
+voz (grand_piano)
+{
+    repetir (2)
+    {
+        repetir (2)
+        {
+            compas
+            {
+                silencio(negra);
+                nota(sol, octava, negra);
+                nota(sol, octava, negra);
+            }
+        }
+        repetir (2)
+        {
+            compas
+            {
+                silencio(negra);
+                nota(do, octava, negra);
+                nota(do, octava, negra);
+            }
+        }
+    }
+    repetir (2)
+    {
+        repetir (2)
+        {
+            compas
+            {
+                silencio(negra);
+                nota(la, octava, negra);
+                nota(la, octava, negra);
+            }
+        }
+        repetir (2)
+        {
+            compas
+            {
+                silencio(negra);
+                nota(mi, octava, negra);
+                nota(mi, octava, negra);
+            }
+        }
+    }
+}
