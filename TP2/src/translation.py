@@ -32,7 +32,7 @@ def generate_track(voice, voice_number, time_signature, clicks_per_beat, output_
         for action in bar.content:
             
             if type(action) is Note:
-                output_file.write('%03d:%02d:%03d On ch=%d note=%s vol=70\n' % (bar_num, beat_num, click_num, voice_number, action.american_tone_with_octave()))
+                output_file.write('%03d:%02d:%03d On  ch=%d note=%s vol=70\n' % (bar_num, beat_num, click_num, voice_number, action.american_tone_with_octave().ljust(3)))
                 temp_click = click_num + action.figure.clicks(clicks_per_beat, time_signature.beat_length)
                 click_num = temp_click % clicks_per_beat
                 
@@ -40,7 +40,7 @@ def generate_track(voice, voice_number, time_signature, clicks_per_beat, output_
                 beat_num =  temp_beat % time_signature.beats_per_bar
                 
                 bar_num = bar_num + (temp_beat / time_signature.beats_per_bar)
-                output_file.write('%03d:%02d:%03d Off ch=%d note=%s vol=0\n' % (bar_num, beat_num, click_num, voice_number, action.american_tone_with_octave()))
+                output_file.write('%03d:%02d:%03d Off ch=%d note=%s vol=0\n' % (bar_num, beat_num, click_num, voice_number, action.american_tone_with_octave().ljust(3)))
             else:
                 temp_click = click_num + action.figure.clicks(clicks_per_beat, time_signature.beat_length)
                 click_num = temp_click % clicks_per_beat                
