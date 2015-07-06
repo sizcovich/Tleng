@@ -4,7 +4,9 @@
 // entonces cada compas puede tener 1 redonda, 2 blancas, 4 negras, etc.
 #compas 3/4
 
-const octava = 4;
+const octava_baja = 3;
+const octava_central = 4;
+const octava_alta = 5;
 const grand_piano = 0;
 
 // Tonicas y quintas
@@ -16,18 +18,18 @@ voz (grand_piano)
         {
             compas
             {
-                nota(mi, octava, negra);
-                nota(si, octava, negra);
-                nota(si, octava, negra);
+                nota(mi, octava_central, negra);
+                nota(si, octava_central, negra);
+                nota(si, octava_central, negra);
             }
         }
         repetir (2)
         {
             compas
             {
-                nota(la, octava, negra);
-                nota(mi, octava, negra);
-                nota(mi, octava, negra);
+                nota(la, octava_baja, negra);
+                nota(mi, octava_central, negra);
+                nota(mi, octava_central, negra);
             }
         }
     }
@@ -37,18 +39,18 @@ voz (grand_piano)
         {
             compas
             {
-                nota(fa, octava, negra);
-                nota(do, octava, negra);
-                nota(do, octava, negra);
+                nota(fa, octava_central, negra);
+                nota(do, octava_alta, negra);
+                nota(do, octava_alta, negra);
             }
         }
         repetir (2)
         {
             compas
             {
-                nota(do, octava, negra);
-                nota(la, octava, negra);
-                nota(la, octava, negra);
+                nota(do, octava_central, negra);
+                nota(la, octava_central, negra);
+                nota(la, octava_central, negra);
             }
         }
     }
@@ -64,8 +66,8 @@ voz (grand_piano)
             compas
             {
                 silencio(negra);
-                nota(sol, octava, negra);
-                nota(sol, octava, negra);
+                nota(sol, octava_central, negra);
+                nota(sol, octava_central, negra);
             }
         }
         repetir (2)
@@ -73,8 +75,8 @@ voz (grand_piano)
             compas
             {
                 silencio(negra);
-                nota(do, octava, negra);
-                nota(do, octava, negra);
+                nota(do, octava_central, negra);
+                nota(do, octava_central, negra);
             }
         }
     }
@@ -85,8 +87,8 @@ voz (grand_piano)
             compas
             {
                 silencio(negra);
-                nota(la, octava, negra);
-                nota(la, octava, negra);
+                nota(la, octava_central, negra);
+                nota(la, octava_central, negra);
             }
         }
         repetir (2)
@@ -94,8 +96,8 @@ voz (grand_piano)
             compas
             {
                 silencio(negra);
-                nota(mi, octava, negra);
-                nota(mi, octava, negra);
+                nota(mi, octava_central, negra);
+                nota(mi, octava_central, negra);
             }
         }
     }

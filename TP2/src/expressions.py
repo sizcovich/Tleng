@@ -13,8 +13,10 @@ class Song(object):
         
         for voice in voices:
             for bar in voice.get_bar_definitions():
-                if bar.relative_length() != time_signature.relative_length():
-                    raise SemanticException("Un compas debe durar lo que se indico en el encabezado. Linea: {0}.".format(bar.line_num))
+                if bar.relative_length() > time_signature.relative_length():
+                    raise SemanticException("El compas tiene tiempos de mas. Linea: {0}.".format(bar.line_num))
+                elif bar.relative_length() < time_signature.relative_length():
+                    raise SemanticException("El compas tiene tiempos de menos. Linea: {0}.".format(bar.line_num))
 
         self.tempo = tempo
         self.time_signature = time_signature        
@@ -31,11 +33,11 @@ class Tempo(object):
 class TimeSignature(object):
     def __init__(self, beats_per_bar, beat_length, line_num):
         if beats_per_bar < 1:
-            raise SemanticException("El nominador de la indicacion de compas debe ser mayor a cero. Linea: {0}.".format(line_num))
+            raise SemanticException("La cantidad de pulsos por compas debe ser mayor a cero. Linea: {0}.".format(line_num))
 
         if beat_length not in figures.values():
-            raise SemanticException("El denominador de la indicacion de compas debe indicar una figura valida. Linea: {0}.".format(line_num))
-        
+            raise SemanticException("La duracion de cada pulso debe indicar una figura valida. Linea: {0}.".format(line_num))
+
         self.beats_per_bar = beats_per_bar
         self.beat_length = beat_length
 
@@ -45,7 +47,10 @@ class TimeSignature(object):
 class Voice(object):
     def __init__(self, instrument, content, line_num):
         if instrument > 127:
-            raise SemanticException("El numero instrumento de una voz debe estar entre 0 y 127. Linea: {0}.".format(line_num))
+            raise SemanticException("Numero instrumento fuera del rango [0, 127]. Linea: {0}.".format(line_num))
+
+        if len(content) == 0:
+            raise SemanticException("Una voz debe tener al menos un compas. Linea: {0}.".format(line_num))
 
         self.instrument = instrument
         self.content = content
@@ -74,7 +79,7 @@ class Bar(object):
 class Repeat(object):
     def __init__(self, repetitions, content, line_num):
         if repetitions < 2:
-            raise SemanticException("El valor de una repeticion debe ser al menos 2. Linea: {0}.".format(line_num))
+            raise SemanticException("Cantidad de repeticiones debe ser al menos 2. Linea: {0}.".format(line_num))
 
         self.content = content
         self.repetitions = repetitions
@@ -89,7 +94,7 @@ class Repeat(object):
 class Note(object):
     def __init__(self, tone, octave, figure, line_num):
         if octave < 1 or octave > 9:
-            raise SemanticException("La octava de una nota debe estar entre 1 y 9. Linea {0}.".format(line_num))
+            raise SemanticException("Octava fuera del rango [1, 9]. Linea {0}.".format(line_num))
         
         self.tone = tone
         self.octave = octave

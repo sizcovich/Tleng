@@ -48,13 +48,16 @@ def p_num_or_const_id_from_const_id(subexpressions):
     const_id = subexpressions[1]
 
     if const_id not in constants:
-        raise SemanticException("Se intento usar la constante \"{0}\" que no fue declarada. Linea: {1}.".format(const_id, subexpressions.lineno(1)))
+        raise SyntacticException("Constante \"{0}\" no declarada. Linea: {1}.".format(const_id, subexpressions.lineno(1)))
             
     subexpressions[0] = constants[const_id]
 
-def p_voice_content_non_empty(subexpressions):
-    'voice_content : bar_or_repeat'
-    subexpressions[0] = [ subexpressions[1] ]
+def p_voice_content_empty(subexpressions):
+    'voice_content :'
+    # esta produccion podria tener un 'bar_or_repeat' del lado izquierdo,
+    # para forzar a que siempre haya al menos un compas en la voz,
+    # pero lo dejamos asi para poder dar un error mas explicito
+    subexpressions[0] = [ ]
 
 def p_voice_content_append(subexpressions):
     'voice_content : bar_or_repeat voice_content'
@@ -83,6 +86,42 @@ def p_bar_content_append_note(subexpressions):
 def p_bar_content_append_silence(subexpressions):
     'bar_content : SILENCE LPAREN FIG RPAREN SEMICOLON bar_content'
     subexpressions[0] = [ Silence(Figure(subexpressions[3], subexpressions.lineno(1)), subexpressions.lineno(1)) ] + subexpressions[6]    
+
+# A partir de aca van producciones para manejar errores comunes
+def p_error_tempo_without_num(subexpressions):
+    'tempo : NUMERAL TEMPO FIG'
+    message = "Falta declarar cuantas {0}s por minuto sera el tempo. Linea: {1}".format(subexpressions[3], subexpressions.lineno(3))
+    raise SyntacticException(message)
+    
+def p_error_tempo_without_fig(subexpressions):
+    'tempo : NUMERAL TEMPO NUM'
+    message = "Falta declarar cual sera la figura del tempo. Linea: {0}".format(subexpressions.lineno(3))
+    raise SyntacticException(message)
+    
+def p_error_const_dict_append_without_semicolon(subexpressions):
+    'const_dict : CONST CONST_ID EQUALS NUM const_dict'
+    message = "Falta el ; al final de la declaracion de la constante. Linea: {0}".format(subexpressions.lineno(4))
+    raise SyntacticException(message)
+    
+def p_error_bar_content_from_note_without_semicolon(subexpressions):
+    'bar_content : NOTE LPAREN TONE COMMA num_or_const_id COMMA FIG RPAREN'
+    message = "Falta el ; al final de la declaracion de la nota. Linea: {0}".format(subexpressions.lineno(8))
+    raise SyntacticException(message)
+    
+def p_error_bar_content_from_silence_without_semicolon(subexpressions):
+    'bar_content : SILENCE LPAREN FIG RPAREN'
+    message = "Falta el ; al final de la declaracion del silencio:. Linea: {0}.".format(subexpressions.lineno(4))
+    raise SyntacticException(message)
+
+def p_error_bar_content_append_note_without_semicolon(subexpressions):
+    'bar_content : NOTE LPAREN TONE COMMA num_or_const_id COMMA FIG RPAREN bar_content'
+    message = "Falta el ; al final de la declaracion de la nota. Linea: {0}.".format(subexpressions.lineno(8))
+    raise SyntacticException(message)
+
+def p_error_bar_content_append_silence_without_semicolon(subexpressions):
+    'bar_content : SILENCE LPAREN FIG RPAREN bar_content'
+    message = "Falta el ; al final de la declaracion del silencio: Linea: {0}.".format(subexpressions.lineno(4))
+    raise SyntacticException(message)
     
 def p_error(token):
     message = "Fin inesperado de archivo."
@@ -93,5 +132,5 @@ def p_error(token):
         if last_cr < 0:
             last_cr = 0    
         col = token.lexpos - last_cr
-        message = "Valor no esperado: \"{0}\". Linea: {1}. Posicion: {2}.".format(token.value, token.lineno, col)
+        message = "Valor \"{0}\" no esperado. Linea: {1}. Posicion: {2}.".format(token.value, token.lineno, col)
     raise SyntacticException(message)

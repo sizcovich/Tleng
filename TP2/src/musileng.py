@@ -30,6 +30,6 @@ if __name__ == "__main__":
         else:
             generate_output(song, stdout)
     except parser_exceptions.SemanticException as exception:
-        print "Error: " + str(exception)
+        print "Error de validacion: " + str(exception)
     except parser_exceptions.SyntacticException as exception:
         print "Error de sintaxis: " + str(exception)

@@ -99,5 +99,5 @@ def t_error(token):
         if last_cr < 0:
             last_cr = 0    
         col = token.lexpos - last_cr
-        message = "Valor no esperado: \"{0}\". Linea: {1}. Posicion: {2}.".format(token.value, token.lineno, col)
+        message = "Valor \"{0}\" no esperado. Linea: {1}. Posicion: {2}.".format(token.value, token.lineno, col)
     raise SyntacticException(message)
