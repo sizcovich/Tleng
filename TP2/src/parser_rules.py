@@ -86,11 +86,11 @@ def p_bar_content_from_note(subexpressions):
     'bar_content : NOTE LPAREN TONE COMMA num_or_const_id COMMA FIG RPAREN SEMICOLON'
     octave_value = subexpressions[5]
         
-    subexpressions[0] = [ Note(subexpressions[3], octave_value, Figure(subexpressions[7]), subexpressions.lineno) ]
+    subexpressions[0] = [ Note(subexpressions[3], octave_value, Figure(subexpressions[7]), subexpressions.lineno(1)) ]
 
 def p_bar_content_from_silence(subexpressions):
     'bar_content : SILENCE LPAREN FIG RPAREN SEMICOLON'
-    subexpressions[0] = [ Silence(Figure(subexpressions[3])) ]
+    subexpressions[0] = [ Silence(Figure(subexpressions[3]), subexpressions.lineno(1)) ]
 
 def p_bar_content_list(subexpressions):
     'bar_content : bar_content bar_content'

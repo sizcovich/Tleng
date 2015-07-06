@@ -42,6 +42,4 @@ if __name__ == "__main__":
     except parser_exceptions.SemanticException as exception:
         print "[Semantic error]: " + str(exception)
     except parser_exceptions.SyntacticException as exception:
-        print "[Syntax error]:  " + str(exception)    
-    except Exception as exception:
-        print "[General error]: " + str(exception)
+        print "[Syntax error]:  " + str(exception)

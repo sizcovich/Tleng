@@ -32,7 +32,7 @@ def t_NUM(token):
     return token
 
 def t_TONE_WITH_ALTERATION(token):
-    r"[_a-zA-Z][_a-zA-Z0-9]*(\+|\-)"
+    r"[a-z][a-z]*(\+|\-)"
     if token.value in tones:
         token.type = 'TONE'
         return token
@@ -40,7 +40,7 @@ def t_TONE_WITH_ALTERATION(token):
         t_error(token)
 
 def t_FIG_WITH_DOT(token):
-    r"[_a-zA-Z][_a-zA-Z0-9]*(\.)"
+    r"[a-z][a-z]*(\.)"
     if token.value in figures:
         token.type = 'FIG'
         token.value = token.value
