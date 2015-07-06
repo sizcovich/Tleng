@@ -90,9 +90,16 @@ t_LBRACE = r"\{"
 t_RBRACE = r"\}"
 t_COMMA = r","
 
-
 t_ignore = " \t"
 
 def t_error(token):
-    message = "Valor no esperado: {0}. Linea: {1}. Posicion: {2}.".format(token.value, token.lineno, token.lexpos)    
+    message = "Fin inesperado de archivo."
+    if token is not None:
+        # Sacado de la doc de PLY como obtener la columna
+        input = token.lexer.lexdata
+        last_cr = input.rfind('\n', 0, token.lexpos)
+        if last_cr < 0:
+            last_cr = 0    
+        col = token.lexpos - last_cr
+        message = "Valor no esperado: \"{0}\". Linea: {1}. Posicion: {2}.".format(token.value, token.lineno, col)
     raise SyntacticException(message)

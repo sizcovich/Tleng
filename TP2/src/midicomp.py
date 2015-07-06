@@ -1,12 +1,9 @@
 import lexer_rules
 import parser_rules
 import parser_exceptions
-
 from sys import argv, exit, stdout
-
 from ply.lex import lex
 from ply.yacc import yacc
-
 
 def dump_song(song, output_file):
     output_file.write('tempo: %s %d\n' % (song.tempo.figure.name, song.tempo.per_minute))
@@ -40,6 +37,6 @@ if __name__ == "__main__":
         else:
             dump_song(song, stdout)
     except parser_exceptions.SemanticException as exception:
-        print "[Semantic error]: " + str(exception)
+        print "Error: " + str(exception)
     except parser_exceptions.SyntacticException as exception:
-        print "[Syntax error]:  " + str(exception)
+        print "Error de sintaxis: " + str(exception)

@@ -3,7 +3,6 @@ from parser_exceptions import *
 from expressions import *
 
 constants = None
-time_signature = None
 
 def p_song_declaration(subexpressions):
     'song_declaration : tempo time_signature const_dict voice_list'
@@ -15,9 +14,7 @@ def p_tempo(subexpressions):
 
 def p_time_signature(subexpressions):
     'time_signature : NUMERAL BAR NUM SLASH NUM'
-    global time_signature
-    time_signature = TimeSignature(subexpressions[3], subexpressions[5], subexpressions.lineno(1))    
-    subexpressions[0] = time_signature
+    subexpressions[0] = TimeSignature(subexpressions[3], subexpressions[5], subexpressions.lineno(1))    
 
 def p_const_dict_empty(subexpressions):
     'const_dict :'
@@ -88,5 +85,13 @@ def p_bar_content_append_silence(subexpressions):
     subexpressions[0] = [ Silence(Figure(subexpressions[3], subexpressions.lineno(1)), subexpressions.lineno(1)) ] + subexpressions[6]    
     
 def p_error(token):
-    message = "Valor no esperado: \"{0}\". Linea: {1}. Posicion: {2}.".format(token.value, token.lineno, token.lexpos)    
+    message = "Fin inesperado de archivo."
+    if token is not None:
+        # Sacado de la doc de PLY como obtener la columna
+        input = token.lexer.lexdata
+        last_cr = input.rfind('\n', 0, token.lexpos)
+        if last_cr < 0:
+            last_cr = 0    
+        col = token.lexpos - last_cr
+        message = "Valor no esperado: \"{0}\". Linea: {1}. Posicion: {2}.".format(token.value, token.lineno, col)
     raise SyntacticException(message)

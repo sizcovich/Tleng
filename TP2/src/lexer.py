@@ -1,21 +1,16 @@
 import lexer_rules
-
 from sys import argv, stdout
-
 from ply.lex import lex
-
 
 def dump_tokens(lexer, output_file):
     token = lexer.token()
     
-    while token is not None:
+    for token in lexer:
         output_file.write("type: " + token.type)
         output_file.write(" - value: " + str(token.value))
         output_file.write(" - line: " + str(token.lineno))
         output_file.write(" - position: " + str(token.lexpos))
         output_file.write("\n")
-
-        token = lexer.token()
 
 if __name__ == "__main__":
     if len(argv) != 2 and len(argv) != 3:
