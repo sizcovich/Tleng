@@ -23,8 +23,7 @@ tokens = [
    'COMMA',
 ]
 
-# relativizo la duracion de las figuras a la negra, por costumbre
-figures = { 'redonda.' : 6, 'redonda' : 4., 'blanca.' : 3., 'blanca' : 2., 'negra.' : 1.5, 'negra' : 1., 'corchea.' : 0.75, 'corchea' : 0.5, 'semicorchea.' : 0.375, 'semicorchea' : 0.25, 'fusa.' : 0.1875, 'fusa' : 0.125, 'semifusa.' : 0.09375, 'semifusa' : 0.0625 }
+figures = set(['redonda.', 'redonda', 'blanca.', 'blanca', 'negra.', 'negra', 'corchea.', 'corchea', 'semicorchea.', 'semicorchea', 'fusa.', 'fusa', 'semifusa.', 'semifusa' ])
 tones = set(['do', 're', 'mi', 'fa', 'sol', 'la', 'si', 'do+', 're+', 'fa+', 'sol+', 'la+', 're-', 'mi-', 'sol-', 'la-', 'si-'])
 
 def t_NUM(token):
@@ -44,7 +43,7 @@ def t_FIG_WITH_DOT(token):
     r"[_a-zA-Z][_a-zA-Z0-9]*(\.)"
     if token.value in figures:
         token.type = 'FIG'
-        token.value = Figure(figures[token.value])
+        token.value = token.value
         return token
     else:    
         t_error(token)
@@ -55,7 +54,7 @@ def t_CONST_ID(token):
         token.type = 'TEMPO'
     elif token.value in figures:
         token.type = 'FIG'
-        token.value = Figure(figures[token.value])
+        token.value = token.value
     elif token.value in tones:
         token.type = 'TONE'
     elif token.value == 'compas':
@@ -95,9 +94,5 @@ t_COMMA = r","
 t_ignore = " \t"
 
 def t_error(token):
-    message = "Token desconocido:"
-    message += "\ntype:" + token.type
-    message += "\nvalue:" + str(token.value)
-    message += "\nline:" + str(token.lineno)
-    message += "\nposition:" + str(token.lexpos)
+    message = "Valor no esperado: {0}. Linea: {1}. Posicion: {2}.".format(token.value, token.lineno, token.lexpos)    
     raise SyntacticException(message)

@@ -3,6 +3,3 @@ class SyntacticException(Exception):
 
 class SemanticException(Exception):
     pass
-
-class ProgrammingException(Exception):
-    pass
