@@ -1,4 +1,4 @@
-class SyntacticException(Exception):
+class SyntacticException(Exception):    
     pass
 
 class SemanticException(Exception):

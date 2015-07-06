@@ -7,98 +7,47 @@ class Song(object):
         self.time_signature = time_signature
         self.constants = constants
         self.voices = voices
-        
-        for voice in voices:
-            voice.set_constants(constants)
-        
-    def name(self):
-        return "Song"
-
-    def children(self):
-        return [self.tempo, self.time_signature] + [Const(k, v) for k,v in self.constants.items()] + self.voices
 
 class Tempo(object):
     def __init__(self, figure, per_minute):
         self.figure = figure
-        self.per_minute = per_minute;
-
-    def name(self):
-        return "Tempo: " + figures_inv[self.figure] + " " + str(self.per_minute)
-
-    def children(self):
-        return []
+        self.per_minute = per_minute
 
 class TimeSignature(object):
-    def __init__(self, figure, per_minute):
-        self.figure = figure
-        self.per_minute = per_minute;
+    def __init__(self, num_beats, beat_length):
+        self.num_beats = num_beats
+        self.beat_length = beat_length
 
-    def name(self):
-        return "TimeSignature: " + figures_inv[self.figure] + " " + str(self.per_minute)
+    def relative_length(self):
+        return (1. / self.beat_length) * self.num_beats
 
-    def children(self):
-        return []
-
-class Const(object):
-    def __init__(self, key, value):
-        self.key = key
-        self.value = value;
-
-    def name(self):
-        return "const " + self.key + " = " + str(self.value)
-
-    def children(self):
-        return []
-
-class NumOrConstantFromNum(object):
-    def __init__(self, num):        
-        self.value = num;
-
-    def set_constants(self, constants_dict):
-        pass
-
-    def get_value(self):
-        return self.value
-
-    def name(self):
-        return "num " str(self.value)
-
-    def children(self):
-        return []
-        
-class NumOrConstantFromConstant(object):
-    def __init__(self, constant_id):
-        self.constant_id = constant_id;
-        self.value = None
-
-    def set_constants(self, constants_dict):
-        if self.constant_id not in constants_dict:
-            raise SemanticException("Uso de constante " + self.constant_id + " no declarada.")
-
-        self.value = constants_dict[self.constant_id]
-
-    def get_value(self):
-        if self.value is None:
-            raise ProgrammingException("Use el value de una constante antes de setearle el diccionario de constantes.")
-
-        return self.value
-
-    def name(self):
-        return "const " + self.constant_id + " = " + str(self.value)
-
-    def children(self):
-        return []
-        
-class Voice(object):
+class VoiceHeader(object):
     def __init__(self, instrument, content):
         self.instrument = instrument
         self.content = content
 
-    def set_constants(self, constants_dict):
-        self.instrument.set_constants(constants_dict)
+class Bar(object):
+    def __init__(self, content):
+        self.content = content
 
-    def name(self):
-        return "voice " + str(self.instrument.get_value())
+    def relative_length(self):
+        return sum(c.relative_length() for c in self.content)
 
-    def children(self):
-        return [self.instrument]
+class Note(object):
+    def __init__(self, tone, octave, length):
+        self.tone = tone
+        self.octave = octave
+        self.length = length
+
+    def relative_length(self):
+        return 1. / self.length
+
+class Silence(object):
+    def __init__(self, length):        
+        self.length = length
+
+    def relative_length(self):
+        return 1. / self.length
+
+class Figure(object):
+    

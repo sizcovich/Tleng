@@ -20,11 +20,11 @@ tokens = [
    'RPAREN',
    'LBRACE',
    'RBRACE',
-   'COMMA'
+   'COMMA',
 ]
 
-figures = { 'redonda' : 1, 'blanca' : 2, 'negra' : 4, 'corchea' : 8, 'semicorchea' : 16, 'fusa' : 32, 'semifusa' : 64 }
-figures_inv = { v: k for k, v in figures.items() }
+# relativizo la duracion de las figuras a la negra, por costumbre
+figures = { 'redonda.' : 6, 'redonda' : 4., 'blanca.' : 3., 'blanca' : 2., 'negra.' : 1.5, 'negra' : 1., 'corchea.' : 0.75, 'corchea' : 0.5, 'semicorchea.' : 0.375, 'semicorchea' : 0.25, 'fusa.' : 0.1875, 'fusa' : 0.125, 'semifusa.' : 0.09375, 'semifusa' : 0.0625 }
 tones = set(['do', 're', 'mi', 'fa', 'sol', 'la', 'si', 'do+', 're+', 'fa+', 'sol+', 'la+', 're-', 'mi-', 'sol-', 'la-', 'si-'])
 
 def t_NUM(token):
@@ -38,7 +38,16 @@ def t_TONE_WITH_ALTERATION(token):
         token.type = 'TONE'
         return token
     else:
-        raise SyntacticException(token.value + "no es una altura reconocida.")
+        t_error(token)
+
+def t_FIG_WITH_DOT(token):
+    r"[_a-zA-Z][_a-zA-Z0-9]*(\.)"
+    if token.value in figures:
+        token.type = 'FIG'
+        token.value = Figure(figures[token.value])
+        return token
+    else:    
+        t_error(token)
 
 def t_CONST_ID(token):
     r"[_a-zA-Z][_a-zA-Z0-9]*"
@@ -46,7 +55,7 @@ def t_CONST_ID(token):
         token.type = 'TEMPO'
     elif token.value in figures:
         token.type = 'FIG'
-        token.value = figures[token.value]
+        token.value = Figure(figures[token.value])
     elif token.value in tones:
         token.type = 'TONE'
     elif token.value == 'compas':
