@@ -136,7 +136,7 @@ Vita, Sebastián & 149/11 & sebastian\_vita@yahoo.com.ar\\
 
 \section{Introducción}
 
-En el siguiente trabajo práctico, debimos diseñar e implementar un programa que permita generar un archivo de audio MIDI a partir de una pieza musical escrita en un lenguaje llamado $Musileng$. Para ello, debimos diseñar una gramática específica para ese lenguaje y posteriormente, implementar un parser que genera un código intermedio a partir de dicha gramática. Una vez obtenido el código intermedio, este se transformó en un archivo de texto con un determinado formato que sirve de entrada para un programa que es capaz de generar archivos MIDI.
+En el siguiente trabajo práctico, debimos diseñar e implementar un programa que permita generar un archivo de audio MIDI a partir de una pieza musical escrita en un lenguaje llamado $Musileng$. Para ello, debimos diseñar una gramática específica para ese lenguaje y posteriormente, implementar un parser que genere un código intermedio a partir de dicha gramática. Una vez obtenido el código intermedio, este se transformó en un archivo de texto con un determinado formato que sirve de entrada para un programa que es capaz de generar archivos MIDI.
 
 En lo que sigue, explicaremos detalles de la implementación.
 \newpage
@@ -146,18 +146,18 @@ En lo que sigue, explicaremos detalles de la implementación.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Implementación}
-Como vimos anteriormente, el problema se puede dividir en dos subproblemas:
+Como vimos anteriormente, el problema se puede dividir en dos:
 \begin{itemize}
  \item Transformar el código escrito en lenguaje $Musileng$ a una gramática mediante el uso de un parser.
 
- \item Transformar lo obtenido en el parser en un archivo en formato SMF $(Standard\ Midi\ File)$ 
+ \item Transformar lo obtenido por el parser en un archivo en formato SMF $(Standard\ Midi\ File)$ \footnote{http://www.midi.org/aboutmidi/tut\_midifiles.php}
 
 \end{itemize}
 
 \subsection{Parser}
-Para la creación del parser, definimos un lexer \footnote{lexer\_rules.py} el cual se encarga de traducir el lenguaje $Musileng$ a una secuencia de $tokens$. En este paso, se eliminan todos los comentarios que puede tener el archivo de entrada y se detectan los posibles errores léxicos del mismo.
+Para la creación del parser, definimos un lexer \footnote{lexer\_rules.py} que se encarga de traducir el lenguaje $Musileng$ a una secuencia de $tokens$. Para ello, se eliminan todos los comentarios del archivo de entrada y se detectan los posibles errores léxicos del mismo.
 
-Una vez obtenida la secuencia de tokens, se definió la siguiente gramática\footnote{parser\_rules.py} en la cual se pueden observar los tokens resaltados en itálica.
+Una vez obtenida la secuencia de tokens, se define la siguiente gramática\footnote{parser\_rules.py} cuyos tokens se ven en itálica
 
 \begin{itemize}
  \item song\_declaration $\rightarrow$ tempo time\_signature const\_dict voice\_list
@@ -184,25 +184,25 @@ Una vez obtenida la secuencia de tokens, se definió la siguiente gramática\foo
 
 \end{itemize}
 
-Con la gramática previamente definida se crea un objeto $song$ el cual contiene el tempo, el compás y la lista de voces. En $tempo$, se verifica que su duración sea mayor a un segundo. Si esto se verifica entonces se almacena tanto la figura como la cantidad de veces que esta aparece en un minuto. En el caso del $compas$ se comprueba que la cantidad de pulsos sea mayor a 1 y que la duración de dichos pulsos pertenezca a una figura válida. Por último se encuentra la $lista de voces$. 
+Con la gramática previamente definida se crea un objeto $song$ el cual contiene el tempo, el compás y la lista de voces. En $tempo$, se verifica que su duración sea mayor a un segundo. Si esto ocurre, entonces se almacena tanto la figura como la cantidad de veces que ésta aparece en un minuto. En el caso del $compas$ se comprueba que la cantidad de pulsos sea mayor a 1 y que la duración de dichos pulsos pertenezca a una figura válida. Por último, se encuentra la $lista de voces$. 
 
 Cada voz posee un conjunto de compases y Repeats. Dichos compaces están conformados por una lista de notas y silencios. Por otro lado, los $Repeats$ se encargan de repetir un compás más de una vez.
 
 \subsection{Traducción a MIDI}
 Una vez obtenida la salida del parser se procede a crear un archivo el cual puede ser interpretado por un generador de archivos MIDI como por ejemplo $midicomp$ \footnote{http://freepats.zenvoid.org/tools/midicomp/}
 
-La entrada al programa $midicomp$ es un archivo el cual consta de dos partes. En la primera se crea el encabezado del archivo. En este se declara la cantidad de tracks que contiene, el compás de los mismos y el tempo el cual indica cuantos microsegundos dura una negra. Como el tempo en nuestro programa se mide por minuto y utilizando cualquier nota, no solo la negra, utilizamos la siguiente formula para poder realizar la conversión:
+La entrada al programa $midicomp$ es un archivo que consta de dos partes. En la primera, se crea el encabezado del archivo. En éste se declara la cantidad de tracks que contiene, el compás de los mismos y el tempo el cual indica cuantos microsegundos dura una negra. Como el tempo en nuestro programa se mide por minuto y utilizando cualquier nota, no sólo la negra, utilizamos la siguiente fórmula para realizar la conversión:
 $\frac{1000000\ *\ 60\ *\ figura}{4\ *\ n}$
 
-En la segunda parte se definen cada uno de los tracks. Cada track se corresponde con una voz y se le asigna un canal único. Para cada uno de estos, se genera un encabezado en el cual consta el instrumento, su nombre y el canal en el que está.Luego, se declaran dol lineas para coda una de las notas de los compaces. Una para encenderla y la otra para apagarla. El formato utilizado es el siguiente:
+En la segunda parte, se define cada uno de los tracks. Cada track se corresponde con una voz y se le asigna un canal único. Para cada uno de éstos, se genera un encabezado conteniendo el nombre del track, el instrumento que interpreta y el canal en el que está. Luego, se declaran dos lineas para coda una de las notas de los compaces. Una para encenderla y la otra para apagarla. El formato utilizado es el siguiente:
 
 \begin{center} 
 COMPAS:PULSO:CLICK STATUS ch=CANAL note=NOTA vol=VOL
 \end{center}
 
-en donde $PULSO:CLICK$ se calcula en base a la duración de cada nota y al orden de la misma dentro del compás siendo 384 la cantidad máxima de clicks por pulso. Para poder calcular que $PULSO:CLICK$ le corresponde a cada nota, se utilizaron las fórmulas provistas por la cátedra.
+en donde $PULSO:CLICK$ se calcula en base a la duración de cada nota y al orden de la misma dentro del compás siendo 384 la cantidad máxima de clicks por pulso. Para poder calcular qué $PULSO:CLICK$ le corresponde a cada nota, se utilizaron las fórmulas provistas por la cátedra.
 
-En el caso de los silencios, se calculó el $PULSO:CLICK$ pero no se escrivío la linea $COMPAS:PULSO:CLICK\ STATUS\ ch=CANAL\ note=NOTA\ vol=VOL$ dado que no era necesario.
+En el caso de los silencios, se calculó el $PULSO:CLICK$ pero no se escribío la línea $COMPAS:PULSO:CLICK\ STATUS\ ch=CANAL\ note=NOTA\ vol=VOL$ dado que no resultó necesario.
 
 \newpage
 
@@ -211,7 +211,7 @@ En el caso de los silencios, se calculó el $PULSO:CLICK$ pero no se escrivío l
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Test}
-Decidimos implementar una serie de test las cuales nos permitieron corroborar el correcto funcionamiento del programa. Estos verificaron los siguientes errores:
+Implementamos una serie de tests para corroborar el correcto funcionamiento de nuestro programa. Los errores que se verificaron fueron los siguientes:
 
 \begin{itemize}
 \item Más de 16 voces
@@ -226,16 +226,16 @@ Decidimos implementar una serie de test las cuales nos permitieron corroborar el
 \item Un Repetir con parámetro 0
 
 \end{itemize}
-Además de estos test, se generaron 2 que muestran el correcto funcionamiento del programa. El primero de ellos corresponde a uno provisto por la cátedra. El segundo, es el Vals de Amelie el cual está interpretado por un Grand Piano.
-\newpage
+demás de estos tests, se generaron otros dos para comprobar que el resultado del programa fuera el deseado. El primero de ellos es el que nos proveyó la cátedra y, el segundo, es el Vals de Amélie, que está interpretado por un Grand Piano.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Ejecución                                                                %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Ejecución}
-El programa se ejecuta mediante el comando $python\ parser.py\ archivo\_entrada\ [archivo\_salida]$ y genera un archivo en formato MIDI. En el caso de que no se provea un archivo de salida, esta se escribirá mediante salida estandar. 
-\newpage
+El programa se ejecuta mediante el comando $python\ parser.py\ archivo\_entrada\ [archivo\_salida]$ y genera un archivo en formato MIDI. En el caso en el que no se provea un archivo de salida, se mostrará el resultado en la salida estandar. 
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Conclusión                                                                %%
