@@ -157,30 +157,42 @@ Como vimos anteriormente, el problema se puede dividir en dos:
 \subsection{Parser}
 Para la creación del parser, definimos un lexer \footnote{lexer\_rules.py} que se encarga de traducir el lenguaje $Musileng$ a una secuencia de $tokens$. Para ello, se eliminan todos los comentarios del archivo de entrada y se detectan los posibles errores léxicos del mismo.
 
-Una vez obtenida la secuencia de tokens, se define la siguiente gramática\footnote{parser\_rules.py} cuyos tokens se ven en itálica
-
+Una vez obtenida la secuencia de tokens, se define la siguiente gramática\footnote{parser\_rules.py} $G\ = <V_n,\ V_t,\ P,\ S>$. En donde: 
 \begin{itemize}
- \item song\_declaration $\rightarrow$ tempo time\_signature const\_dict voice\_list
+\item $V\_n = \{song\_declaration,\ tempo,\ time\_signature,\ const\_dict,\ voice\_list,\ num\_or\_const\_id,\ voice\_content,\\ \ bar\_or\_repeat,\ bar\_content\}$
 
- \item tempo $\rightarrow$ $numeral\ tempo\ fig\ num$
+\item $V\_t = \{tempo,\ bar,\ voice,\ repeat,\ note,\ silence,\ fig,\ tone,\ num,\ const,\ const_id,\  numeral,\ slash,\ equals,\\ semicolon,\ lparen,\ rparen,\ lbrace,\ rbrace,\ comma\}$
 
- \item time\_signature $\rightarrow$ $numeral\ bar\ num\ slash\ num$
+\item 
+\begin{equation*}
+  P = \left\lbrace
+  \begin{array}{l}
+      $song\_declaration$ \rightarrow\  $tempo\ time\_signature\ const\_dict\ voice\_list$ \\
 
- \item const\_dict $\rightarrow$ $const\ const\_id\ equals\ num\ semicolon$ const\_dict $\mid\ \lambda$
+  $tempo$\ \rightarrow\ numeral\ tempo\ fig\ num\\
 
- \item voice\_list $\rightarrow$ $voice\ lparen$ num\_or\_const\_id $rparen\ lbrace$ voice\_content $rbrace$ voice\_list $\mid\ \lambda$
+  $time\_signature$\ \rightarrow\ numeral\ bar\ num\ slash\ num\\
 
- \item num\_or\_const\_id $\rightarrow$ $num$ $\mid\ const\_id$
+  $const\_dict$\ \rightarrow\ const\ const\_id\ equals\ num\ semicolon\ $const\_dict$ \mid\ \lambda\\
 
- \item voice\_content $\rightarrow$ bar\_or\_repeat voice\_content $\mid\ \lambda$
+  $voice\_list$\ \rightarrow\ voice\ lparen\ $num\_or\_const\_id$\ rparen\ lbrace\ $voice\_content$\ rbrace\ $voice\_list$ \mid\ \lambda\\
 
- \item bar\_or\_repeat $\rightarrow$ $bar\ lbrace$ bar\_content $rbrace$ $\mid$ 
- \\ \-\hspace{2.5cm} $repeat\ lparen$ num\_or\_const\_id $rparen\ lbrace$ voice\_content $rbrace$
+  $num\_or\_const\_id$\ \rightarrow\ num\ \mid\ const\_id\\
 
- \item bar\_content $\rightarrow$ $note\ lparen\ tone\ comma$ num\_or\_const\_id $comma\ fig\ rparen\ semicolon$ $\mid$ 
- \\ \-\hspace{2.2cm} $silence\ lparen\ fig\ rparen\ semicolon$ $\mid$
- \\ \-\hspace{2.2cm} $note\ lparen\ tone\ comma$ num\_or\_const\_id $comma\ fig\ rparen\ semicolon$ bar\_content$\mid$
- \\ \-\hspace{2.2cm} $silence\ lparen\ fig\ rparen\ semicolon$ bar\_content
+  $voice\_content$\ \rightarrow\ $bar\_or\_repeat\ voice\_content$\ \mid\ \lambda\\
+
+  $bar\_or\_repeat$\ \rightarrow\ bar\ lbrace\ $bar\_content$\ rbrace\ \mid\ 
+ \\ \-\hspace{2.5cm}\ repeat\ lparen\ $num\_or\_const\_id$\ rparen\ lbrace\ $voice\_content$\ rbrace\\
+
+  $bar\_content$\ \rightarrow\ note\ lparen\ tone\ comma\ $num\_or\_const\_id$\ comma\ fig\ rparen\ semicolon\ \mid\ 
+ \\ \-\hspace{2.2cm}\ silence\ lparen\ fig\ rparen\ semicolon\ \mid
+ \\ \-\hspace{2.2cm}\ note\ lparen\ tone\ comma\ $num\_or\_const\_id$ comma\ fig\ rparen\ semicolon\ $bar\_content$\mid
+ \\ \-\hspace{2.2cm}\ silence\ lparen\ fig\ rparen\ semicolon\ $bar\_content$
+
+  \end{array}
+  \right.
+\end{equation*}
+\item $S = \{song\_declaration\}$
 
 \end{itemize}
 
