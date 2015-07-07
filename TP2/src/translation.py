@@ -9,8 +9,8 @@ def generate_output(song, output_file):
     
     output_file.write('MFile 1 %d %d\n' % (ntracks, clicks_per_beat))
     output_file.write('MTrk\n' % ())
-    output_file.write('000:00:000 TimeSig %s 24 8\n' % (midi_bar))
     output_file.write('000:00:000 Tempo %d\n' % (midi_tempo))
+    output_file.write('000:00:000 TimeSig %s 24 8\n' % (midi_bar))    
     output_file.write('000:00:000 Meta TrkEnd\n' % ())
     output_file.write('TrkEnd\n' % ())
     
