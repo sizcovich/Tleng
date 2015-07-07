@@ -138,6 +138,7 @@ Vita, Sebastián & 149/11 & sebastian\_vita@yahoo.com.ar\\
 
 En el siguiente trabajo práctico, debimos diseñar e implementar un programa que permita generar un archivo de audio MIDI a partir de una pieza musical escrita en un lenguaje llamado $Musileng$. Para ello, debimos diseñar una gramática específica para ese lenguaje y posteriormente, implementar un parser que genera un código intermedio a partir de dicha gramática. Una vez obtenido el código intermedio, este se transformó en un archivo de texto con un determinado formato que sirve de entrada para un programa que es capaz de generar archivos MIDI.
 
+En lo que sigue, explicaremos detalles de la implementación.
 \newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,7 +146,69 @@ En el siguiente trabajo práctico, debimos diseñar e implementar un programa qu
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Implementación}
+Como vimos anteriormente, el problema se puede dividir en dos subproblemas:
+\begin{itemize}
+ \item Transformar el código escrito en lenguaje $Musileng$ a una gramática mediante el uso de un parser.
 
+ \item Transformar lo obtenido en el parser en un archivo en formato SMF $(Standard\ Midi\ File)$ 
+
+\end{itemize}
+
+\subsection{Parser}
+Para la creación del parser, definimos un lexer \footnote{lexer\_rules.py} el cual se encarga de traducir el lenguaje $Musileng$ a una secuencia de $tokens$. En este paso, se eliminan todos los comentarios que puede tener el archivo de entrada y se detectan los posibles errores léxicos del mismo.
+
+Una vez obtenida la secuencia de tokens, se definió la siguiente gramática\footnote{parser\_rules.py} en la cual se pueden observar los tokens resaltados en itálica.
+
+\begin{itemize}
+ \item song\_declaration $\rightarrow$ tempo time\_signature const\_dict voice\_list
+
+ \item tempo $\rightarrow$ $numeral\ tempo\ fig\ num$
+
+ \item time\_signature $\rightarrow$ $numeral\ bar\ num\ slash\ num$
+
+ \item const\_dict $\rightarrow$ $const\ const\_id\ equals\ num\ semicolon$ const\_dict $\mid\ \lambda$
+
+ \item voice\_list $\rightarrow$ $voice\ lparen$ num\_or\_const\_id $rparen\ lbrace$ voice\_content $rbrace$ voice\_list $\mid\ \lambda$
+
+ \item num\_or\_const\_id $\rightarrow$ $num$ $\mid\ const\_id$
+
+ \item voice\_content $\rightarrow$ bar\_or\_repeat voice\_content $\mid\ \lambda$
+
+ \item bar\_or\_repeat $\rightarrow$ $bar\ lbrace$ bar\_content $rbrace$ $\mid$ 
+ \\ \-\hspace{2.5cm} $repeat\ lparen$ num\_or\_const\_id $rparen\ lbrace$ voice\_content $rbrace$
+
+ \item bar\_content $\rightarrow$ $note\ lparen\ tone\ comma$ num\_or\_const\_id $comma\ fig\ rparen\ semicolon$ $\mid$ 
+ \\ \-\hspace{2.2cm} $silence\ lparen\ fig\ rparen\ semicolon$ $\mid$
+ \\ \-\hspace{2.2cm} $note\ lparen\ tone\ comma$ num\_or\_const\_id $comma\ fig\ rparen\ semicolon$ bar\_content$\mid$
+ \\ \-\hspace{2.2cm} $silence\ lparen\ fig\ rparen\ semicolon$ bar\_content
+
+\end{itemize}
+
+Con la gramática previamente definida se crea un objeto $song$ el cual contiene el tempo, el compás y la lista de voces. En $tempo$, se verifica que su duración sea mayor a un segundo. Si esto se verifica entonces se almacena tanto la figura como la cantidad de veces que esta aparece en un minuto. En el caso del $compas$ se comprueba que la cantidad de pulsos sea mayor a 1 y que la duración de dichos pulsos pertenezca a una figura válida. Por último se encuentra la $lista de voces$. 
+
+Cada voz posee un conjunto de compases y Repeats. Dichos compaces están conformados por una lista de notas y silencios. Por otro lado, los $Repeats$ se encargan de repetir un compás más de una vez.
+
+\subsection{Traducción a MIDI}
+Una vez obtenida la salida del parser se procede a crear un archivo el cual puede ser interpretado por un generador de archivos MIDI como por ejemplo $midicomp$ \footnote{http://freepats.zenvoid.org/tools/midicomp/}
+
+explicar traductor
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Test                                                                %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Test}
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Ejecución                                                                %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Ejecución}
+El programa se ejecuta mediante el comando $python\ parser.py\ archivo\_entrada\ [archivo\_salida]$ y genera un archivo en formato MIDI. En el caso de que no se provea un archivo de salida, esta se escribirá mediante salida estandar. 
 \newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
