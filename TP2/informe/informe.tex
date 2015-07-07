@@ -191,7 +191,18 @@ Cada voz posee un conjunto de compases y Repeats. Dichos compaces están conform
 \subsection{Traducción a MIDI}
 Una vez obtenida la salida del parser se procede a crear un archivo el cual puede ser interpretado por un generador de archivos MIDI como por ejemplo $midicomp$ \footnote{http://freepats.zenvoid.org/tools/midicomp/}
 
-explicar traductor
+La entrada al programa $midicomp$ es un archivo el cual consta de dos partes. En la primera se crea el encabezado del archivo. En este se declara la cantidad de tracks que contiene, el compás de los mismos y el tempo el cual indica cuantos microsegundos dura una negra. Como el tempo en nuestro programa se mide por minuto y utilizando cualquier nota, no solo la negra, utilizamos la siguiente formula para poder realizar la conversión:
+$\frac{1000000\ *\ 60\ *\ figura}{4\ *\ n}$
+
+En la segunda parte se definen cada uno de los tracks. Cada track se corresponde con una voz y se le asigna un canal único. Para cada uno de estos, se genera un encabezado en el cual consta el instrumento, su nombre y el canal en el que está.Luego, se declaran dol lineas para coda una de las notas de los compaces. Una para encenderla y la otra para apagarla. El formato utilizado es el siguiente:
+
+\begin{center} 
+COMPAS:PULSO:CLICK STATUS ch=CANAL note=NOTA vol=VOL
+\end{center}
+
+en donde $PULSO:CLICK$ se calcula en base a la duración de cada nota y al orden de la misma dentro del compás siendo 384 la cantidad máxima de clicks por pulso. Para poder calcular que $PULSO:CLICK$ le corresponde a cada nota, se utilizaron las fórmulas provistas por la cátedra.
+
+En el caso de los silencios, se calculó el $PULSO:CLICK$ pero no se escrivío la linea $COMPAS:PULSO:CLICK\ STATUS\ ch=CANAL\ note=NOTA\ vol=VOL$ dado que no era necesario.
 
 \newpage
 
@@ -200,7 +211,22 @@ explicar traductor
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Test}
+Decidimos implementar una serie de test las cuales nos permitieron corroborar el correcto funcionamiento del programa. Estos verificaron los siguientes errores:
 
+\begin{itemize}
+\item Más de 16 voces
+\item Ninguna voz
+\item Un compás con duración mayor a la especificada
+\item Un compás con duración menor a la especificada
+\item Un compás vacío 
+\item Un Repetir vacío
+\item Una voz vacía 
+\item Un compás que usa una constante no declarada
+\item Un número de instrumento fuera de rango
+\item Un Repetir con parámetro 0
+
+\end{itemize}
+Además de estos test, se generaron 2 que muestran el correcto funcionamiento del programa. El primero de ellos corresponde a uno provisto por la cátedra. El segundo, es el Vals de Amelie el cual está interpretado por un Grand Piano.
 \newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
