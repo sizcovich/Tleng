@@ -157,6 +157,21 @@ Como vimos anteriormente, el problema se puede dividir en dos:
 \subsection{Parser}
 Para la creación del parser, definimos un lexer \footnote{lexer\_rules.py} que se encarga de traducir el lenguaje $Musileng$ a una secuencia de $tokens$. Para ello, se eliminan todos los comentarios del archivo de entrada y se detectan los posibles errores léxicos del mismo.
 
+Las expresiones regulares utilizadas para distinguir los tokens son las siguientes: 
+\begin{center}
+$
+\begin{array}{l}
+      $num$ \rightarrow\  $[0-9][0-9]*$ \\
+
+  	  $tone$\ \rightarrow\ $[a-z][a-z]*(+ $\mid$ -)$\\
+
+  	  $fig$\ \rightarrow\ $[a-z][a-z]*(.)$\\
+\end{array}
+$
+\end{center}
+
+El resto de los tokens, se distinguen utilizando la siguiente expresión regular [\_a-zA-Z][\_a-zA-Z0-9]*
+
 Una vez obtenida la secuencia de tokens, se define la siguiente gramática\footnote{parser\_rules.py} $G\ = <V_n,\ V_t,\ P,\ S>$. En donde: 
 \begin{itemize}
 \item $V\_n = \{song\_declaration,\ tempo,\ time\_signature,\ const\_dict,\ voice\_list,\ num\_or\_const\_id,\ voice\_content,\\ \ bar\_or\_repeat,\ bar\_content\}$
@@ -254,5 +269,7 @@ El programa se ejecuta mediante el comando $python\ parser.py\ archivo\_entrada\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Conclusión}
+
+Luego de haber realizado toda la implementación en Python, llegamos a la conclusión de que es un lenguaje muy ameno para la construccion de parsers. Esto se debe a que el generador de parsers $ply$ es muy sencillo de usar.
 
 \end{document}
