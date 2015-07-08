@@ -19,57 +19,57 @@ voz (grand_piano)
     }
     repetir(2)
     {
-    compas
-    {
-        nota(re, octava_mas_alta, redonda);
-        silencio(negra.);
-        nota(do, octava_mas_alta, corchea);
-    }
-    compas
-    {
-        nota(si, octava_alta, blanca.);
-        nota(la, octava_alta, blanca.);
-    }
-    compas
-    {
-        nota(re, octava_mas_alta, redonda);
-        nota(mi, octava_mas_alta, corchea);
-        nota(re, octava_mas_alta, corchea);
-        nota(do, octava_mas_alta, negra);        
-    }
-    compas
-    {
-        nota(si, octava_alta, corchea);
-        nota(do, octava_mas_alta, corchea);        
-        nota(si, octava_alta, blanca);
-        nota(la, octava_alta, blanca.);
-    }
-    compas
-    {
-        nota(do, octava_mas_alta, redonda);
-        silencio(negra.);
-        nota(si, octava_alta, corchea);
-    }
-    compas
-    {        
-        nota(mi, octava_alta, redonda);
-        nota(fa, octava_alta, negra);
-        nota(mi, octava_alta, negra);
-    }
-    compas
-    {
-        nota(do, octava_mas_alta, redonda);
-        nota(re, octava_mas_alta, corchea);
-        nota(do, octava_mas_alta, corchea);
-        nota(si, octava_alta, negra);
-    }
-    compas
-    {
-        nota(do, octava_mas_alta, corchea);
-        nota(si, octava_alta, corchea);
-        nota(mi, octava_alta, redonda);
-        silencio(negra);
-    }
+        compas
+        {
+            nota(re, octava_mas_alta, redonda);
+            silencio(negra.);
+            nota(do, octava_mas_alta, corchea);
+        }
+        compas
+        {
+            nota(si, octava_alta, blanca.);
+            nota(la, octava_alta, blanca.);
+        }
+        compas
+        {
+            nota(re, octava_mas_alta, redonda);
+            nota(mi, octava_mas_alta, corchea);
+            nota(re, octava_mas_alta, corchea);
+            nota(do, octava_mas_alta, negra);        
+        }
+        compas
+        {
+            nota(si, octava_alta, corchea);
+            nota(do, octava_mas_alta, corchea);        
+            nota(si, octava_alta, blanca);
+            nota(la, octava_alta, blanca.);
+        }
+        compas
+        {
+            nota(do, octava_mas_alta, redonda);
+            silencio(negra.);
+            nota(si, octava_alta, corchea);
+        }
+        compas
+        {        
+            nota(mi, octava_alta, redonda);
+            nota(fa, octava_alta, negra);
+            nota(mi, octava_alta, negra);
+        }
+        compas
+        {
+            nota(do, octava_mas_alta, redonda);
+            nota(re, octava_mas_alta, corchea);
+            nota(do, octava_mas_alta, corchea);
+            nota(si, octava_alta, negra);
+        }
+        compas
+        {
+            nota(do, octava_mas_alta, corchea);
+            nota(si, octava_alta, corchea);
+            nota(mi, octava_alta, redonda);
+            silencio(negra);
+        }
     }
 }
 

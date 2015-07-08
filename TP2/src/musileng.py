@@ -19,7 +19,7 @@ if __name__ == "__main__":
     input_file.close()
 
     lexer = lex(module=lexer_rules)
-    parser = yacc(module=parser_rules)
+    parser = yacc(debug=0,module=parser_rules)
         
     try:
         song = parser.parse(text, lexer)

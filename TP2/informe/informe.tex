@@ -136,57 +136,56 @@ Vita, Sebastián & 149/11 & sebastian\_vita@yahoo.com.ar\\
 
 \section{Introducción}
 
-En el siguiente trabajo práctico, debimos diseñar e implementar un programa que permita generar un archivo de audio MIDI a partir de una pieza musical escrita en un lenguaje llamado $Musileng$. Para ello, debimos diseñar una gramática específica para ese lenguaje y posteriormente, implementar un parser que genere un código intermedio a partir de dicha gramática. Una vez obtenido el código intermedio, este se transformó en un archivo de texto con un determinado formato que sirve de entrada para un programa que es capaz de generar archivos MIDI.
+En el siguiente trabajo práctico, debimos diseñar e implementar un programa que permita generar un archivo de audio MIDI\footnote{http://www.midi.org/aboutmidi/tut\_midifiles.php} a partir de una pieza musical escrita en un lenguaje llamado $Musileng$. Para ello, debimos diseñar una gramática que reconozca ese lenguaje y posteriormente, implementar un parser que genere un código intermedio a partir de dicha gramática. Una vez obtenido el código intermedio, utilizamos el programa $midicomp$ \footnote{http://freepats.zenvoid.org/tools/midicomp/} para generar el archivo en formato MIDI.
 
-En lo que sigue, explicaremos detalles de la implementación.
-\newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Implementación                                                            %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Implementación}
-Como vimos anteriormente, el problema se puede dividir en dos:
-\begin{itemize}
- \item Transformar el código escrito en lenguaje $Musileng$ a una gramática mediante el uso de un parser.
+\subsection{Gramática}
+El primer paso para la definición de nuestra gramática $G\ = <V_n,\ V_t,\ P,\ S>$ fue decidir cuales serían los símbolos terminales de la misma. Luego con esto, definimos los no terminales, y las producciones.
 
- \item Transformar lo obtenido por el parser en un archivo en formato SMF $(Standard\ Midi\ File)$ \footnote{http://www.midi.org/aboutmidi/tut\_midifiles.php}
+\subsubsection{Terminales - Tokens}
 
-\end{itemize}
+$V\_t = \{tempo,\ bar,\ voice,\ repeat,\ note,\ silence,\ fig,\ tone,\ num,\ const,\ const\_id,\  numeral,\ slash,\ equals,\\ semicolon,\ lparen,\ rparen,\ lbrace,\ rbrace,\ comma\}$
 
-\subsection{Parser}
-Para la creación del parser, definimos un lexer \footnote{lexer\_rules.py} que se encarga de traducir el lenguaje $Musileng$ a una secuencia de $tokens$. Para ello, se eliminan todos los comentarios del archivo de entrada y se detectan los posibles errores léxicos del mismo.
+El lexer con sus reglas definidas en lexer\_rules.py se encarga de convertir el archivo de entrada a una secuencia de estos $tokens$ de simbolos terminales.
 
 Las expresiones regulares utilizadas para distinguir los tokens son las siguientes: 
-\begin{center}
-$
-\begin{array}{l}
-      $num$ \rightarrow\  $[0-9][0-9]*$ \\
+\begin{enumerate}
+\item	$[0-9][0-9]* \rightarrow$ se utiliza para transformar numeros en el terminal $num$ \\
+\item	$[\_a-zA-Z][\_a-zA-Z0-9]* \rightarrow$ se utiliza para reconocer todas las palabras que comienzen con letras o guión bajo, y sigan con cualquier cantidad de letas, guiones bajos o numeros. Si el valor reconocido es alguna de las palabras reservadas del lenguaje (tempo, compas, voz, repetir, const, nota o silencio), se mapea al token correspondiente ($tempo,\ bar,\ voice,\ repeat,\ const,\ note$ y $silencio$). Si el valor se corresponde con alguna de las figuras (redonda, blanca, negra, corchea, semicorchea, fusa o semifusa), se lo mapea al token $fig$. Si el valor se corresponde con alguna de los tonos (do, re, mi, fa, sol, la o si) se lo mapea al token $tone$. Finalmente, cualquier valor que matchee la expresión regular, y no caiga en ninguno de los casos anteriores, se lo considera como que es un nombre de constante, mapeandoselo al token $const\_id$.
+\item $[a-z][a-z]*(\backslash .) \rightarrow$ se utiliza para reconocer las figuras con puntillo. Estas tambien se las mapea al token $fig$. En caso de que el valor no sea una figura, arroja un error de sintaxis.
+\item $[a-z][a-z]*(\backslash + \mid \backslash -) \rightarrow$ se utiliza para reconocer las tonalidades con alteraciones. Estas tambien se las mapea al token $tone$. En caso de que el valor no sea un tono, arroja un error de sintaxis.
+\end{enumerate}
 
-  	  $tone$\ \rightarrow\ $[a-z][a-z]*(+ $\mid$ -)$\\
+El resto de los tokens se reconoce buscando directamente el caracter apropiado, como por ejemplo ``\#'' para el token $numeral$, ``;'' para el token $semicolon$, etc.
 
-  	  $fig$\ \rightarrow\ $[a-z][a-z]*(.)$\\
-\end{array}
-$
-\end{center}
+Finalmente, el lexer tambien se encargar de eliminar los comentarios. Para ello, utiliza la expresión regular $//(.*?)\backslash r?\backslash n$, que matchea todo lo que se encuentra entre dos barras y el fín de linea, y lo ignora.
 
-El resto de los tokens, se distinguen utilizando la siguiente expresión regular [\_a-zA-Z][\_a-zA-Z0-9]*
+\subsubsection{No Terminales}
+Definimos la siguiente lista de símbolos no terminales:
 
-Una vez obtenida la secuencia de tokens, se define la siguiente gramática\footnote{parser\_rules.py} $G\ = <V_n,\ V_t,\ P,\ S>$. En donde: 
-\begin{itemize}
-\item $V\_n = \{song\_declaration,\ tempo,\ time\_signature,\ const\_dict,\ voice\_list,\ num\_or\_const\_id,\ voice\_content,\\ \ bar\_or\_repeat,\ bar\_content\}$
+$V\_n = \{song\_declaration,\ tempo\_declaration,\ time\_signature\_declaration,\ const\_dict,\ voice\_list,\ num\_or\_const\_id,\ voice\_content,\\ \ bar\_or\_repeat,\ bar\_content\}$
 
-\item $V\_t = \{tempo,\ bar,\ voice,\ repeat,\ note,\ silence,\ fig,\ tone,\ num,\ const,\ const\_id,\  numeral,\ slash,\ equals,\\ semicolon,\ lparen,\ rparen,\ lbrace,\ rbrace,\ comma\}$
+El símbolo distinguido será:
 
-\item 
+$S = song\_declaration$
+
+\subsubsection{Producciones}
+
+Las producciones correspondientes son:
+
 \begin{equation*}
   P = \left\lbrace
   \begin{array}{l}
-      $song\_declaration$ \rightarrow\  $tempo\ time\_signature\ const\_dict\ voice\_list$ \\
+      $song\_declaration$ \rightarrow\  $tempo\_declaration\ time\_signature\_declaration\ const\_dict\ voice\_list$ \\
 
-  $tempo$\ \rightarrow\ numeral\ tempo\ fig\ num\\
+  $tempo\_declaration$\ \rightarrow\ numeral\ tempo\ fig\ num\\
 
-  $time\_signature$\ \rightarrow\ numeral\ bar\ num\ slash\ num\\
+  $time\_signature\_declaration$\ \rightarrow\ numeral\ bar\ num\ slash\ num\\
 
   $const\_dict$\ \rightarrow\ const\ const\_id\ equals\ num\ semicolon\ $const\_dict$ \mid\ \lambda\\
 
@@ -207,16 +206,18 @@ Una vez obtenida la secuencia de tokens, se define la siguiente gramática\footn
   \end{array}
   \right.
 \end{equation*}
-\item $S = song\_declaration$
 
-\end{itemize}
+Aclaramos que tomamos la decisión de que nuestro parser acepte $repetir$ anidados, ya que no nos agregaba mucha complejidad, y si aportaba mayor flexibilidad a la hora de la composición.
+Tambien
+
+\subsection{Parser}
 
 Con la gramática previamente definida se crea un objeto $song$ el cual contiene el tempo, el compás y la lista de voces. En $tempo$, se verifica que su duración sea mayor a un segundo. Si esto ocurre, entonces se almacena tanto la figura como la cantidad de veces que ésta aparece en un minuto. En el caso del $compas$ se comprueba que la cantidad de pulsos sea mayor a 1 y que la duración de dichos pulsos pertenezca a una figura válida. Por último, se encuentra la $lista de voces$. 
 
 Cada voz posee un conjunto de compases y Repeats. Dichos compaces están conformados por una lista de notas y silencios. Por otro lado, los $Repeats$ se encargan de repetir un compás más de una vez.
 
 \subsection{Traducción a MIDI}
-Una vez obtenida la salida del parser se procede a crear un archivo el cual puede ser interpretado por un generador de archivos MIDI como por ejemplo $midicomp$ \footnote{http://freepats.zenvoid.org/tools/midicomp/}
+Una vez obtenida la salida del parser se procede a crear un archivo el cual puede ser interpretado por un generador de archivos MIDI como por ejemplo 
 
 La entrada al programa $midicomp$ es un archivo que consta de dos partes. En la primera, se crea el encabezado del archivo. En éste se declara la cantidad de tracks que contiene, el compás de los mismos y el tempo el cual indica cuantos microsegundos dura una negra. Como el tempo en nuestro programa se mide por minuto y utilizando cualquier nota, no sólo la negra, utilizamos la siguiente fórmula para realizar la conversión:
 $\frac{1000000\ *\ 60\ *\ figura}{4\ *\ n}$
@@ -230,8 +231,6 @@ COMPAS:PULSO:CLICK STATUS ch=CANAL note=NOTA vol=VOL
 en donde $PULSO:CLICK$ se calcula en base a la duración de cada nota y al orden de la misma dentro del compás siendo 384 la cantidad máxima de clicks por pulso. Para poder calcular qué $PULSO:CLICK$ le corresponde a cada nota, se utilizaron las fórmulas provistas por la cátedra.
 
 En el caso de los silencios, se calculó el $PULSO:CLICK$ pero no se escribío la línea $COMPAS:PULSO:CLICK\ STATUS\ ch=CANAL\ note=NOTA\ vol=VOL$ dado que no resultó necesario.
-
-\newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Test                                                                %%
@@ -251,9 +250,11 @@ Implementamos una serie de tests para corroborar el correcto funcionamiento de n
 \item Un compás que usa una constante no declarada
 \item Un número de instrumento fuera de rango
 \item Un Repetir con parámetro 0
+\item Tempo sin valor
+\item Tempo sin figura
 
 \end{itemize}
-demás de estos tests, se generaron otros tres para comprobar que el resultado del programa fuera el deseado. El primero de ellos es el que nos proveyó la cátedra. El segundo, es el Vals de Amélie, que está interpretado por un Grand Piano. Por último, generamos la canción del Padrino interpretada con dos acordiones y una guitarra.
+Además de estos tests, se escribieron otros tres inputs comprobar que el resultado del programa fuera el deseado. El primero de ellos es el que se presentó en el enunciado. El segundo es la melodía de la famosa película ``El Padrino'', en el que probamos varias voces en simultaneo. Por último, escribimos la introducción del Vals de Amélie, un vals en 12 / 8. Aqui probamos la funcionalidad de repetición (tanto anidada como no anidada).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -5,15 +5,15 @@ from expressions import *
 constants = None
 
 def p_song_declaration(subexpressions):
-    'song_declaration : tempo time_signature const_dict voice_list'
+    'song_declaration : tempo_declaration time_signature_declaration const_dict voice_list'
     subexpressions[0] = Song(subexpressions[1], subexpressions[2], subexpressions[4])
 
 def p_tempo(subexpressions):
-    'tempo : NUMERAL TEMPO FIG NUM'
+    'tempo_declaration : NUMERAL TEMPO FIG NUM'
     subexpressions[0] = Tempo(Figure(subexpressions[3], subexpressions.lineno(1)), subexpressions[4], subexpressions.lineno(1))
 
 def p_time_signature(subexpressions):
-    'time_signature : NUMERAL BAR NUM SLASH NUM'
+    'time_signature_declaration : NUMERAL BAR NUM SLASH NUM'
     subexpressions[0] = TimeSignature(subexpressions[3], subexpressions[5], subexpressions.lineno(1))    
 
 def p_const_dict_empty(subexpressions):
@@ -89,12 +89,12 @@ def p_bar_content_append_silence(subexpressions):
 
 # A partir de aca van producciones para manejar errores comunes
 def p_error_tempo_without_num(subexpressions):
-    'tempo : NUMERAL TEMPO FIG'
+    'tempo_declaration : NUMERAL TEMPO FIG'
     message = "Falta declarar cuantas {0}s por minuto sera el tempo. Linea: {1}".format(subexpressions[3], subexpressions.lineno(3))
     raise SyntacticException(message)
     
 def p_error_tempo_without_fig(subexpressions):
-    'tempo : NUMERAL TEMPO NUM'
+    'tempo_declaration : NUMERAL TEMPO NUM'
     message = "Falta declarar cual sera la figura del tempo. Linea: {0}".format(subexpressions.lineno(3))
     raise SyntacticException(message)
     
