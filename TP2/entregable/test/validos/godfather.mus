@@ -1,0 +1,415 @@
+#tempo negra 76
+#compas 8/4
+
+const octava_baja = 3;
+const octava_central = 4;
+const octava_alta = 5;
+const octava_mas_alta = 6;
+const instrumento1 = 22;
+const instrumento2 = 22;
+const instrumento3 = 25;
+
+// Melodia principal
+voz (instrumento1)
+{
+    compas
+    {
+        nota(fa+, octava_alta, corchea);
+        nota(si, octava_alta, corchea);
+        nota(re, octava_mas_alta, corchea);
+        nota(do+, octava_mas_alta, corchea);
+        nota(si, octava_alta, corchea);
+        nota(re, octava_mas_alta, corchea);
+        nota(si, octava_alta, corchea);
+        nota(do+, octava_mas_alta, corchea);
+        nota(si, octava_alta, corchea);
+        nota(sol, octava_alta, corchea);
+        nota(la, octava_alta, corchea);
+        nota(fa+, octava_alta, blanca);
+        silencio(corchea);
+    }
+    compas
+    {
+        nota(fa+, octava_alta, corchea);
+        nota(si, octava_alta, corchea);
+        nota(re, octava_mas_alta, corchea);
+        nota(do+, octava_mas_alta, corchea);
+        nota(si, octava_alta, corchea);
+        nota(re, octava_mas_alta, corchea);
+        nota(si, octava_alta, corchea);
+        nota(do+, octava_mas_alta, corchea);
+        nota(si, octava_alta, corchea);
+        nota(fa+, octava_alta, corchea);
+        nota(fa, octava_alta, corchea);
+        nota(mi, octava_alta, blanca);
+        silencio(corchea);
+    }
+    compas
+    {
+        nota(mi, octava_alta, corchea);
+        nota(sol, octava_alta, corchea);
+        nota(la+, octava_alta, corchea);
+        nota(do+, octava_mas_alta, blanca);
+        silencio(corchea);
+        nota(mi, octava_alta, corchea);
+        nota(sol, octava_alta, corchea);
+        nota(la+, octava_alta, corchea);
+        nota(si, octava_alta, blanca);
+        silencio(corchea);
+    }
+    compas
+    {
+        nota(si, octava_central, corchea);
+        nota(re, octava_alta, corchea);
+        nota(la, octava_alta, corchea);
+        nota(sol, octava_alta, corchea);
+        nota(fa+, octava_alta, corchea);
+        nota(la, octava_alta, corchea);
+        nota(sol, octava_alta, corchea);
+        nota(sol, octava_alta, corchea);
+        nota(fa+, octava_alta, corchea);
+        nota(fa+, octava_alta, corchea);
+        nota(la+, octava_central, corchea);
+        nota(si, octava_central, blanca);
+        silencio(corchea);
+    }
+}
+
+// Melodia baja
+voz (instrumento2)
+{
+    compas
+    {
+        nota(fa+, octava_central, corchea);
+        nota(si, octava_central, corchea);
+        nota(re, octava_alta, corchea);
+        nota(do+, octava_alta, corchea);
+        nota(si, octava_central, corchea);
+        nota(re, octava_alta, corchea);
+        nota(si, octava_central, corchea);
+        nota(do+, octava_alta, corchea);
+        nota(si, octava_central, corchea);
+        nota(sol, octava_central, corchea);
+        nota(la, octava_central, corchea);
+        nota(fa+, octava_central, blanca);
+        silencio(corchea);
+    }
+    compas
+    {
+        nota(fa+, octava_central, corchea);
+        nota(si, octava_central, corchea);
+        nota(re, octava_alta, corchea);
+        nota(do+, octava_alta, corchea);
+        nota(si, octava_central, corchea);
+        nota(re, octava_alta, corchea);
+        nota(si, octava_central, corchea);
+        nota(do+, octava_alta, corchea);
+        nota(si, octava_central, corchea);
+        nota(fa+, octava_central, corchea);
+        nota(fa, octava_central, corchea);
+        nota(mi, octava_central, blanca);
+        silencio(corchea);
+    }
+    compas
+    {
+        nota(mi, octava_central, corchea);
+        nota(sol, octava_central, corchea);
+        nota(la+, octava_central, corchea);
+        nota(do+, octava_alta, blanca);
+        silencio(corchea);
+        nota(mi, octava_central, corchea);
+        nota(sol, octava_central, corchea);
+        nota(la+, octava_central, corchea);
+        nota(si, octava_central, blanca);
+        silencio(corchea);
+    }
+    compas
+    {
+        nota(si, octava_baja, corchea);
+        nota(re, octava_central, corchea);
+        nota(la, octava_central, corchea);
+        nota(sol, octava_central, corchea);
+        nota(fa+, octava_central, corchea);
+        nota(la, octava_central, corchea);
+        nota(sol, octava_central, corchea);
+        nota(sol, octava_central, corchea);
+        nota(fa+, octava_central, corchea);
+        nota(fa+, octava_central, corchea);
+        nota(la+, octava_baja, corchea);
+        nota(si, octava_baja, blanca);
+        silencio(corchea);
+    }
+}
+
+// Melodia trinada
+voz (instrumento3)
+{
+    compas
+    {
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(re, octava_mas_alta, fusa);
+        nota(re, octava_mas_alta, fusa);
+        nota(re, octava_mas_alta, fusa);
+        nota(re, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(re, octava_mas_alta, fusa);
+        nota(re, octava_mas_alta, fusa);
+        nota(re, octava_mas_alta, fusa);
+        nota(re, octava_mas_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(la, octava_alta, fusa);
+        nota(la, octava_alta, fusa);
+        nota(la, octava_alta, fusa);
+        nota(la, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+    }
+    compas
+    {
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(re, octava_mas_alta, fusa);
+        nota(re, octava_mas_alta, fusa);
+        nota(re, octava_mas_alta, fusa);
+        nota(re, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(re, octava_mas_alta, fusa);
+        nota(re, octava_mas_alta, fusa);
+        nota(re, octava_mas_alta, fusa);
+        nota(re, octava_mas_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa, octava_alta, fusa);
+        nota(fa, octava_alta, fusa);
+        nota(fa, octava_alta, fusa);
+        nota(fa, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+    }
+    compas
+    {
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(la+, octava_alta, fusa);
+        nota(la+, octava_alta, fusa);
+        nota(la+, octava_alta, fusa);
+        nota(la+, octava_alta, fusa);        
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(do+, octava_mas_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(mi, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(la+, octava_alta, fusa);
+        nota(la+, octava_alta, fusa);
+        nota(la+, octava_alta, fusa);
+        nota(la+, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+        nota(si, octava_alta, fusa);
+    }
+    compas
+    {
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(re, octava_alta, fusa);
+        nota(re, octava_alta, fusa);
+        nota(re, octava_alta, fusa);
+        nota(re, octava_alta, fusa);
+        nota(la, octava_alta, fusa);
+        nota(la, octava_alta, fusa);
+        nota(la, octava_alta, fusa);
+        nota(la, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(la, octava_alta, fusa);
+        nota(la, octava_alta, fusa);
+        nota(la, octava_alta, fusa);
+        nota(la, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(sol, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(fa+, octava_alta, fusa);
+        nota(la+, octava_central, fusa);
+        nota(la+, octava_central, fusa);
+        nota(la+, octava_central, fusa);
+        nota(la+, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+        nota(si, octava_central, fusa);
+    }
+}

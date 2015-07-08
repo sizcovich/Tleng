@@ -1,0 +1,174 @@
+#tempo negra 190
+#compas 12/8
+
+const octava_baja = 3;
+const octava_central = 4;
+const octava_alta = 5;
+const octava_mas_alta = 6;
+const grand_piano = 0;
+
+// Melodia principal
+voz (grand_piano)
+{
+    repetir (8)
+    {
+        compas
+        {
+            silencio(redonda.);
+        }
+    }
+    repetir(2)
+    {
+        compas
+        {
+            nota(re, octava_mas_alta, redonda);
+            silencio(negra.);
+            nota(do, octava_mas_alta, corchea);
+        }
+        compas
+        {
+            nota(si, octava_alta, blanca.);
+            nota(la, octava_alta, blanca.);
+        }
+        compas
+        {
+            nota(re, octava_mas_alta, redonda);
+            nota(mi, octava_mas_alta, corchea);
+            nota(re, octava_mas_alta, corchea);
+            nota(do, octava_mas_alta, negra);        
+        }
+        compas
+        {
+            nota(si, octava_alta, corchea);
+            nota(do, octava_mas_alta, corchea);        
+            nota(si, octava_alta, blanca);
+            nota(la, octava_alta, blanca.);
+        }
+        compas
+        {
+            nota(do, octava_mas_alta, redonda);
+            silencio(negra.);
+            nota(si, octava_alta, corchea);
+        }
+        compas
+        {        
+            nota(mi, octava_alta, redonda);
+            nota(fa, octava_alta, negra);
+            nota(mi, octava_alta, negra);
+        }
+        compas
+        {
+            nota(do, octava_mas_alta, redonda);
+            nota(re, octava_mas_alta, corchea);
+            nota(do, octava_mas_alta, corchea);
+            nota(si, octava_alta, negra);
+        }
+        compas
+        {
+            nota(do, octava_mas_alta, corchea);
+            nota(si, octava_alta, corchea);
+            nota(mi, octava_alta, redonda);
+            silencio(negra);
+        }
+    }
+}
+
+// Base: Tonicas y quintas
+voz (grand_piano)
+{
+    repetir (3)
+    {
+        repetir (2)
+        {
+            compas
+            {
+                nota(re, octava_central, negra);
+                nota(la, octava_central, negra);
+                nota(la, octava_central, negra);
+                nota(re, octava_central, negra);
+                nota(la, octava_central, negra);
+                nota(la, octava_central, negra);
+            }
+            compas
+            {
+                nota(la, octava_baja, negra);
+                nota(mi, octava_central, negra);
+                nota(mi, octava_central, negra);
+                nota(la, octava_baja, negra);
+                nota(mi, octava_central, negra);
+                nota(mi, octava_central, negra);
+            }
+        }
+        repetir (2)
+        {            
+            compas
+            {
+                nota(fa, octava_central, negra);
+                nota(do, octava_alta, negra);
+                nota(do, octava_alta, negra);
+                nota(fa, octava_central, negra);
+                nota(do, octava_alta, negra);
+                nota(do, octava_alta, negra);
+            }      
+            compas
+            {
+                nota(do, octava_central, negra);
+                nota(sol, octava_central, negra);
+                nota(sol, octava_central, negra);
+                nota(do, octava_central, negra);
+                nota(sol, octava_central, negra);
+                nota(sol, octava_central, negra);
+            }
+        }
+    }
+}
+
+// Base: Terceras
+voz (grand_piano)
+{
+    repetir (3)
+    {
+        repetir (2)
+        {
+            compas
+            {
+                silencio(negra);
+                nota(fa, octava_central, negra);
+                nota(fa, octava_central, negra);
+                silencio(negra);
+                nota(fa, octava_central, negra);
+                nota(fa, octava_central, negra);
+            }
+            compas
+            {
+                silencio(negra);
+                nota(do, octava_central, negra);
+                nota(do, octava_central, negra);
+                silencio(negra);
+                nota(do, octava_central, negra);
+                nota(do, octava_central, negra);
+            }
+        }
+        repetir (2)
+        {
+            compas
+            {
+                silencio(negra);
+                nota(la, octava_central, negra);
+                nota(la, octava_central, negra);
+                silencio(negra);
+                nota(la, octava_central, negra);
+                nota(la, octava_central, negra);
+            }
+            compas
+            {
+                silencio(negra);
+                nota(mi, octava_central, negra);
+                nota(mi, octava_central, negra);
+                silencio(negra);
+                nota(mi, octava_central, negra);
+                nota(mi, octava_central, negra);
+            }
+        }
+    }
+}

@@ -208,16 +208,33 @@ Las producciones correspondientes son:
 \end{equation*}
 
 Aclaramos que tomamos la decisión de que nuestro parser acepte $repetir$ anidados, ya que no nos agregaba mucha complejidad, y si aportaba mayor flexibilidad a la hora de la composición.
-Tambien
+También decidimos que la gramática aceptara canciones sin ninguna voz definida, para manejarlo después como un error de validación, y poder dar un mensaje mas explícito.
 
 \subsection{Parser}
 
-Con la gramática previamente definida se crea un objeto $song$ el cual contiene el tempo, el compás y la lista de voces. En $tempo$, se verifica que su duración sea mayor a un segundo. Si esto ocurre, entonces se almacena tanto la figura como la cantidad de veces que ésta aparece en un minuto. En el caso del $compas$ se comprueba que la cantidad de pulsos sea mayor a 1 y que la duración de dichos pulsos pertenezca a una figura válida. Por último, se encuentra la $lista de voces$. 
+Con la gramática previamente definida lo que se obtiene es una representación en objetos de la canción, siendo del tipo \texttt{Song} el objeto raíz. Este objeto contiene un objeto de tipo \texttt{Tempo}, uno de tipo \texttt{Time\_Signature} y una lista de objetos \texttt{Voice}. El objeto \texttt{Song} es el encargado de verigicar que la cantidad de voces se encuentre en el rango [1 - 16], y que la duración de cada compás de cada voz sea igual a la definida en el objeto \texttt{Time\_Signature}.
 
-Cada voz posee un conjunto de compases y Repeats. Dichos compaces están conformados por una lista de notas y silencios. Por otro lado, los $Repeats$ se encargan de repetir un compás más de una vez.
+\texttt{Tempo} verifica que el valor asignado a figuras por minuto sea al menos 1. \texttt{Time\_Signature} valida que se setee al menos 1 pulso por compás, y que el valor del pulso se corresponda a una figura válida. Como los calculos del largo de los compases se hacen relativos a 1 redonda (por ejemplo, un compas de 2 / 4 tendría un valor relativo de 0.5), \texttt{Time\_Signature} da la referencia de que valor relativo tendrían que durar todos los compases, y para eso provee la función \texttt{relative\_length}.
 
-\subsection{Traducción a MIDI}
-Una vez obtenida la salida del parser se procede a crear un archivo el cual puede ser interpretado por un generador de archivos MIDI como por ejemplo 
+El objeto \texttt{Voice} tiene el número de instrumento MIDI de la voz (el cual valida que esté en el rango [0 - 127], y una lista de \texttt{Bar}s y \texttt{Repeat}s, la cual valida que tenga al menos un elemento.
+
+\texttt{Bar} contiene la lista de notas y silencios a ejecutarse en un compás. \texttt{Repeat} contiene la cantidad de repeticiones (que valida que sean al menos 2), y una lista de \texttt{Bar}s y \texttt{Repeat}s (esto último permite tener repetir anidados), la cual valida que no se encuentre vacía.
+
+Estos tres objetos proveen dos funciones comunes, que permiten obtener listas de compases. 
+
+Por un lado, \texttt{get\_bar\_definitions}, que en el caso de \texttt{Voice} y \texttt{Repeat} realizan un llamado a esta misma función en cada uno de los elementos de sus listas de contenido, y los agrupan en una sola lista, y en el caso de \texttt{Bar} devuelve un arreglo conteniendo a si mismo como unico elemento. Esta función sirve para obtener los compases que fueron declarados explicitamente.
+
+Por un lado, \texttt{get\_bar\_executions}, que en el caso de \texttt{Voice} y \texttt{Bar} se comportan igual que la funcion anterior, y en el caso de \texttt{Repeat} realiza el llamado recursivo a cada elemento de su lista de contenidos, y antes de devolverla, la replica tantas veces como indique la cantidad de repeticiones. En este caso entonces, al llamar al metodo desde una voz, se obtiene cada compás a ser ejecutado, luego de aplicarle las repeticiones.
+
+\texttt{Bar} también contiene el método \texttt{relative\_length}, que suma la duración relativa de cada una de sus notas y silencios.
+
+Finalmente, tenemos los objetos \texttt{Note}, que guarda la informacion relevante a una nota, y valida que la octava este en el rango [1 - 9], \texttt{Silence}, que guarda unicamente la figura correspondiente al silencio, y \texttt{Figure} que representa una figura. Estas tres clases también tienen el método \texttt{relative\_length}, pero tanto \texttt{Note} como \texttt{Silence} lo que devuelven es el relative\_length de su correspondiente figura. La que implementa realmente el calculo es la clase \texttt{Figure}, realizando las cuentas pertinentes, y teniendo en cuenta si la figura tiene o no puntillo.
+
+\texttt{Figure} también brinda un método llamado \texttt{clicks}, que ayuda a facilitar la traducción, calculando cuantos clicks duraría esa figura, en base a los clicks por pulso, y la duración del pulso.
+
+\subsection{Traducción a formato intermedio}
+
+Una vez obtenida la salida del parser, con los objetos definidos en la sección anterior, se procede a crear un archivo el cual puede ser interpretado por el generador de archivos MIDI.
 
 La entrada al programa $midicomp$ es un archivo que consta de dos partes. En la primera, se crea el encabezado del archivo. En éste se declara la cantidad de tracks que contiene, el compás de los mismos y el tempo el cual indica cuantos microsegundos dura una negra. Como el tempo en nuestro programa se mide por minuto y utilizando cualquier nota, no sólo la negra, utilizamos la siguiente fórmula para realizar la conversión:
 $\frac{1000000\ *\ 60\ *\ figura}{4\ *\ n}$
@@ -228,7 +245,7 @@ En la segunda parte, se define cada uno de los tracks. Cada track se corresponde
 COMPAS:PULSO:CLICK STATUS ch=CANAL note=NOTA vol=VOL
 \end{center}
 
-en donde $PULSO:CLICK$ se calcula en base a la duración de cada nota y al orden de la misma dentro del compás siendo 384 la cantidad máxima de clicks por pulso. Para poder calcular qué $PULSO:CLICK$ le corresponde a cada nota, se utilizaron las fórmulas provistas por la cátedra.
+en donde $PULSO:CLICK$ se calcula en base a la duración de cada nota y al orden de la misma dentro del compás siendo 384 la cantidad de clicks por pulso. Para poder calcular qué $PULSO:CLICK$ le corresponde a cada nota, se utilizaron las fórmulas provistas por la cátedra.
 
 En el caso de los silencios, se calculó el $PULSO:CLICK$ pero no se escribío la línea $COMPAS:PULSO:CLICK\ STATUS\ ch=CANAL\ note=NOTA\ vol=VOL$ dado que no resultó necesario.
 
@@ -252,8 +269,8 @@ Implementamos una serie de tests para corroborar el correcto funcionamiento de n
 \item Un Repetir con parámetro 0
 \item Tempo sin valor
 \item Tempo sin figura
-
 \end{itemize}
+
 Además de estos tests, se escribieron otros tres inputs comprobar que el resultado del programa fuera el deseado. El primero de ellos es el que se presentó en el enunciado. El segundo es la melodía de la famosa película ``El Padrino'', en el que probamos varias voces en simultaneo. Por último, escribimos la introducción del Vals de Amélie, un vals en 12 / 8. Aqui probamos la funcionalidad de repetición (tanto anidada como no anidada).
 
 
@@ -262,8 +279,9 @@ Además de estos tests, se escribieron otros tres inputs comprobar que el result
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Ejecución}
-El programa se ejecuta mediante el comando $python\ parser.py\ archivo\_entrada\ [archivo\_salida]$ y genera un archivo en formato MIDI. En el caso en el que no se provea un archivo de salida, se mostrará el resultado en la salida estandar. 
+El programa se ejecuta mediante el comando $python\ musileng.py\ archivo\_entrada\ [archivo\_salida]$. El archivo de salida es opcional, y en caso de no pasarsele uno, se mostrará por pantalla el resultado de la traducción. Si no, se escribira en el archivo indicado.
 
+Con este archivo resultante, se puede utilizar el programa $midicomp$ para generar el archivo MIDI apropiado.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Conclusión                                                                %%
@@ -271,6 +289,503 @@ El programa se ejecuta mediante el comando $python\ parser.py\ archivo\_entrada\
 
 \section{Conclusión}
 
-Luego de haber realizado toda la implementación en Python, llegamos a la conclusión de que es un lenguaje muy ameno para la construccion de parsers. Esto se debe a que el generador de parsers $ply$ es muy sencillo de usar.
+Llegamos a la conclusión de que el lenguaje Python, con el paquete $ply$ es una muy buena opción para construir parsers. No nos encontramos con ningún problema, la documentación nos pareció clara, y no nos puso ningún tipo de trabas.
+
+La construcción de la gramática fue bastante directa, tampoco le encontramos dificultades. Donde más tuvimos que pensar fue en la definicion de la estructura devuelta por el parser, y algunos dilemas como si usar variables globales para todo, o intentar utilizar siempre lo que venía en las subexpresiones definiendo objetos apropiados. Creemos que cualquiera de los dos caminos hubiera sido apropiado, por lo que usamos una mezcla, guardando las constantes en una variable global, y accediendolo al momento en el que se usaban, y construyendo con los objetos una estructura ``válida'.'
+
+Por último, uno de nuestros integrantes es músico, y utilizó el lenguaje para escribir las piezas ``El Padrino'' y ``El Vals de Amelie'', y concluyó en que si bien el lenguaje $Musileng$ fue interesante didácticamente para la construcción del parser, no es un lenguaje muy util para la composición musical, ya que, más allá de sus faltantes, lleva mucho tiempo escribir música en el.
+
+\section{Apendice: Código}
+\subsection{lexer\_rules.py}
+\begin{verbatim}
+from parser_exceptions import SyntacticException
+
+tokens = [
+   'TEMPO',
+   'BAR',
+   'VOICE',
+   'REPEAT',
+   'NOTE',
+   'SILENCE',
+   'FIG',
+   'TONE',
+   'NUM',   
+   'CONST',
+   'CONST_ID',
+   'NUMERAL',
+   'SLASH',
+   'EQUALS',
+   'SEMICOLON',
+   'LPAREN',
+   'RPAREN',
+   'LBRACE',
+   'RBRACE',
+   'COMMA',
+]
+
+figures = set(['redonda.', 'redonda', 'blanca.', 'blanca', 'negra.', 'negra', 
+'corchea.', 'corchea', 'semicorchea.', 'semicorchea', 'fusa.', 'fusa', 'semifusa.',
+'semifusa' ])
+tones = set(['do', 're', 'mi', 'fa', 'sol', 'la', 'si', 'do+', 're+', 'fa+',
+'sol+', 'la+', 're-', 'mi-', 'sol-', 'la-', 'si-'])
+
+def t_NUM(token):
+    r"[0-9][0-9]*"
+    token.value = int(token.value)
+    return token
+
+def t_TONE_WITH_ALTERATION(token):
+    r"[a-z][a-z]*(\+|\-)"
+    if token.value in tones:
+        token.type = 'TONE'
+        return token
+    else:
+        t_error(token)
+
+def t_FIG_WITH_DOT(token):
+    r"[a-z][a-z]*(\.)"
+    if token.value in figures:
+        token.type = 'FIG'        
+        return token
+    else:    
+        t_error(token)
+
+def t_CONST_ID(token):
+    r"[_a-zA-Z][_a-zA-Z0-9]*"
+    if token.value == 'tempo':
+        token.type = 'TEMPO'
+    elif token.value in figures:
+        token.type = 'FIG'
+    elif token.value in tones:
+        token.type = 'TONE'
+    elif token.value == 'compas':
+        token.type = 'BAR'
+    elif token.value == 'voz':
+        token.type = 'VOICE'
+    elif token.value == 'repetir':
+        token.type = 'REPEAT'
+    elif token.value == 'const':
+        token.type = 'CONST'
+    elif token.value == 'nota':
+        token.type = 'NOTE'
+    elif token.value == 'silencio':
+        token.type = 'SILENCE'
+
+    return token
+
+def t_IGNORE_COMMENTS(token):
+    r"//(.*?)\r?\n"
+    token.lexer.lineno += 1
+    
+def t_NEWLINE(token):
+  r"\n+"
+  token.lexer.lineno += len(token.value)
+
+t_NUMERAL = r"\#"
+t_SLASH = r"/"
+t_EQUALS = r"="
+t_SEMICOLON = r";"
+t_LPAREN = r"\("
+t_RPAREN = r"\)"
+t_LBRACE = r"\{"
+t_RBRACE = r"\}"
+t_COMMA = r","
+
+t_ignore = " \t"
+
+def t_error(token):
+    message = "Fin inesperado de archivo."
+    if token is not None:
+        # Sacado de la doc de PLY como obtener la columna
+        input = token.lexer.lexdata
+        last_cr = input.rfind('\n', 0, token.lexpos)
+        if last_cr < 0:
+            last_cr = 0    
+        col = token.lexpos - last_cr
+        message = "Valor \"{0}\" no esperado. Linea: {1}. Posicion:
+        {2}.".format(token.value, token.lineno, col)
+    raise SyntacticException(message)
+\end{verbatim}
+\subsection{parser\_rules.py}
+\begin{verbatim}
+from lexer_rules import tokens
+from parser_exceptions import *
+from expressions import *
+
+constants = None
+
+def p_song_declaration(subexpressions):
+    'song_declaration : tempo_declaration time_signature_declaration const_dict voice_list'
+    subexpressions[0] = Song(subexpressions[1], subexpressions[2], subexpressions[4])
+
+def p_tempo(subexpressions):
+    'tempo_declaration : NUMERAL TEMPO FIG NUM'
+    subexpressions[0] = Tempo(Figure(subexpressions[3], subexpressions.lineno(1)),
+    subexpressions[4], subexpressions.lineno(1))
+
+def p_time_signature(subexpressions):
+    'time_signature_declaration : NUMERAL BAR NUM SLASH NUM'
+    subexpressions[0] = TimeSignature(subexpressions[3], subexpressions[5], 
+    subexpressions.lineno(1))    
+
+def p_const_dict_empty(subexpressions):
+    'const_dict :'
+    global constants
+    constants = {}
+
+def p_const_dict_append(subexpressions):
+    'const_dict : CONST CONST_ID EQUALS NUM SEMICOLON const_dict'
+    id_token = subexpressions[2]
+    num_token = subexpressions[4]
+    
+    if id_token in constants:        
+        raise SemanticException("Se intento declarar la constante \"{0}\" mas de una vez. 
+        Linea: {1}.".format(id_token, subexpressions.lineno(1)))
+    
+    constants[id_token] = num_token
+
+def p_voice_list_empty(subexpressions):
+    'voice_list :'
+    subexpressions[0] = []
+
+def p_voice_list_append(subexpressions):
+    'voice_list : VOICE LPAREN num_or_const_id RPAREN LBRACE voice_content RBRACE voice_list'
+    subexpressions[0] = [ Voice(subexpressions[3], subexpressions[6], subexpressions.lineno(1)) ]
+    + subexpressions[8]
+
+def p_num_or_const_id_from_num(subexpressions):
+    'num_or_const_id : NUM'
+    subexpressions[0] = subexpressions[1]
+
+def p_num_or_const_id_from_const_id(subexpressions):
+    'num_or_const_id : CONST_ID'
+    const_id = subexpressions[1]
+
+    if const_id not in constants:
+        raise SyntacticException("Constante \"{0}\" no declarada. Linea: {1}."
+        .format(const_id, subexpressions.lineno(1)))
+            
+    subexpressions[0] = constants[const_id]
+
+def p_voice_content_empty(subexpressions):
+    'voice_content :'
+    # esta produccion podria tener un 'bar_or_repeat' del lado izquierdo,
+    # para forzar a que siempre haya al menos un compas en la voz,
+    # pero lo dejamos asi para poder dar un error mas explicito
+    subexpressions[0] = [ ]
+
+def p_voice_content_append(subexpressions):
+    'voice_content : bar_or_repeat voice_content'
+    subexpressions[0] = [ subexpressions[1] ] + subexpressions[2]
+    
+def p_bar_or_repeat_from_bar(subexpressions):
+    'bar_or_repeat : BAR LBRACE bar_content RBRACE'
+    subexpressions[0] = Bar(subexpressions[3], subexpressions.lineno(1))
+    
+def p_bar_or_repeat_from_repeat(subexpressions):
+    'bar_or_repeat : REPEAT LPAREN num_or_const_id RPAREN LBRACE voice_content RBRACE'
+    subexpressions[0] = Repeat(subexpressions[3], subexpressions[6], subexpressions.lineno(1))
+
+def p_bar_content_from_note(subexpressions):
+    'bar_content : NOTE LPAREN TONE COMMA num_or_const_id COMMA FIG RPAREN SEMICOLON'
+    subexpressions[0] = [ Note(subexpressions[3], subexpressions[5], Figure(subexpressions[7], subexpressions.lineno(1)), subexpressions.lineno(1)) ]
+
+def p_bar_content_from_silence(subexpressions):
+    'bar_content : SILENCE LPAREN FIG RPAREN SEMICOLON'
+    subexpressions[0] = [ Silence(Figure(subexpressions[3], subexpressions.lineno(1)), subexpressions.lineno(1)) ]
+
+def p_bar_content_append_note(subexpressions):
+    'bar_content : NOTE LPAREN TONE COMMA num_or_const_id COMMA FIG RPAREN SEMICOLON bar_content'
+    subexpressions[0] = [ Note(subexpressions[3], subexpressions[5], Figure(subexpressions[7], subexpressions.lineno(1)), subexpressions.lineno(1)) ] + subexpressions[10]
+
+def p_bar_content_append_silence(subexpressions):
+    'bar_content : SILENCE LPAREN FIG RPAREN SEMICOLON bar_content'
+    subexpressions[0] = [ Silence(Figure(subexpressions[3], subexpressions.lineno(1)), subexpressions.lineno(1)) ] + subexpressions[6]    
+
+# A partir de aca van producciones para manejar errores comunes
+def p_error_tempo_without_num(subexpressions):
+    'tempo_declaration : NUMERAL TEMPO FIG'
+    message = "Falta declarar cuantas {0}s por minuto sera el tempo. Linea: {1}".format(subexpressions[3], subexpressions.lineno(3))
+    raise SyntacticException(message)
+    
+def p_error_tempo_without_fig(subexpressions):
+    'tempo_declaration : NUMERAL TEMPO NUM'
+    message = "Falta declarar cual sera la figura del tempo. Linea: {0}".format(subexpressions.lineno(3))
+    raise SyntacticException(message)
+    
+def p_error_const_dict_append_without_semicolon(subexpressions):
+    'const_dict : CONST CONST_ID EQUALS NUM const_dict'
+    message = "Falta el ; al final de la declaracion de la constante. Linea: {0}".format(subexpressions.lineno(4))
+    raise SyntacticException(message)
+    
+def p_error_bar_content_from_note_without_semicolon(subexpressions):
+    'bar_content : NOTE LPAREN TONE COMMA num_or_const_id COMMA FIG RPAREN'
+    message = "Falta el ; al final de la declaracion de la nota. Linea: {0}".format(subexpressions.lineno(8))
+    raise SyntacticException(message)
+    
+def p_error_bar_content_from_silence_without_semicolon(subexpressions):
+    'bar_content : SILENCE LPAREN FIG RPAREN'
+    message = "Falta el ; al final de la declaracion del silencio:. Linea: {0}.".format(subexpressions.lineno(4))
+    raise SyntacticException(message)
+
+def p_error_bar_content_append_note_without_semicolon(subexpressions):
+    'bar_content : NOTE LPAREN TONE COMMA num_or_const_id COMMA FIG RPAREN bar_content'
+    message = "Falta el ; al final de la declaracion de la nota. Linea: {0}.".format(subexpressions.lineno(8))
+    raise SyntacticException(message)
+
+def p_error_bar_content_append_silence_without_semicolon(subexpressions):
+    'bar_content : SILENCE LPAREN FIG RPAREN bar_content'
+    message = "Falta el ; al final de la declaracion del silencio: Linea: {0}.".format(subexpressions.lineno(4))
+    raise SyntacticException(message)
+    
+def p_error(token):
+    message = "Fin inesperado de archivo."
+    if token is not None:
+        # Sacado de la doc de PLY como obtener la columna
+        input = token.lexer.lexdata
+        last_cr = input.rfind('\n', 0, token.lexpos)
+        if last_cr < 0:
+            last_cr = 0    
+        col = token.lexpos - last_cr
+        message = "Valor \"{0}\" no esperado. Linea: {1}. Posicion: {2}.".format(token.value, token.lineno, col)
+    raise SyntacticException(message)
+\end{verbatim}
+\subsection{expressions.py}
+\begin{verbatim}
+from parser_exceptions import SemanticException
+
+figures = { 'redonda' : 1, 'blanca' : 2, 'negra' : 4, 'corchea' : 8, 'semicorchea' : 16, 'fusa' : 32, 'semifusa' : 64 }
+american = { 'do' : 'c', 're' : 'd', 'mi' : 'e', 'fa' : 'f', 'sol' : 'g', 'la' : 'a', 'si' : 'b', 'do+' : 'c+', 're+' : 'd+', 'fa+' : 'f+', 'sol+' : 'g+', 'la+' : 'a+', 're-' : 'd-', 'mi-' : 'e-', 'sol-' : 'g-', 'la-' : 'a-', 'si-' : 'b-' }
+
+class Song(object):
+    def __init__(self, tempo, time_signature, voices):
+        if len(voices) > 16:
+            raise SemanticException("No se pueden declarar mas de 16 voces.")
+
+        if len(voices) == 0:
+            raise SemanticException("Debe declararse al menos 1 voz.")
+        
+        for voice in voices:
+            for bar in voice.get_bar_definitions():
+                if bar.relative_length() > time_signature.relative_length():
+                    raise SemanticException("El compas tiene tiempos de mas. Linea: {0}.".format(bar.line_num))
+                elif bar.relative_length() < time_signature.relative_length():
+                    raise SemanticException("El compas tiene tiempos de menos. Linea: {0}.".format(bar.line_num))
+
+        self.tempo = tempo
+        self.time_signature = time_signature        
+        self.voices = voices
+
+class Tempo(object):
+    def __init__(self, figure, per_minute, line_num):    
+        if per_minute < 1:
+            raise SemanticException("El valor del tempo debe ser mayor a cero. Linea: {0}.".format(line_num))
+            
+        self.figure = figure
+        self.per_minute = per_minute
+
+class TimeSignature(object):
+    def __init__(self, beats_per_bar, beat_length, line_num):
+        if beats_per_bar < 1:
+            raise SemanticException("La cantidad de pulsos por compas debe ser mayor a cero. Linea: {0}.".format(line_num))
+
+        if beat_length not in figures.values():
+            raise SemanticException("La duracion de cada pulso debe indicar una figura valida. Linea: {0}.".format(line_num))
+
+        self.beats_per_bar = beats_per_bar
+        self.beat_length = beat_length
+
+    def relative_length(self):
+        return self.beats_per_bar * (1. / self.beat_length)
+
+class Voice(object):
+    def __init__(self, instrument, content, line_num):
+        if instrument > 127:
+            raise SemanticException("Numero instrumento fuera del rango [0, 127]. Linea: {0}.".format(line_num))
+
+        if len(content) == 0:
+            raise SemanticException("Una voz debe tener al menos un compas. Linea: {0}.".format(line_num))
+
+        self.instrument = instrument
+        self.content = content
+        self.line_num = line_num
+
+    def get_bar_definitions(self):
+        return [ bar for c in self.content for bar in c.get_bar_definitions() ]
+
+    def get_bar_executions(self):
+        return [ bar for c in self.content for bar in c.get_bar_executions() ]
+
+class Bar(object):
+    def __init__(self, content, line_num):
+        self.content = content
+        self.line_num = line_num
+
+    def get_bar_definitions(self):
+        return [ self ]
+
+    def get_bar_executions(self):
+        return [ self ]
+
+    def relative_length(self):
+        return sum(c.relative_length() for c in self.content)
+
+class Repeat(object):
+    def __init__(self, repetitions, content, line_num):
+        if repetitions < 2:
+            raise SemanticException("Cantidad de repeticiones debe ser al menos 2. Linea: {0}.".format(line_num))
+
+        if len(content) == 0:
+            raise SemanticException("Declaracion de repetir con cuerpo vacio. Linea: {0}.".format(line_num))
+        
+        self.content = content
+        self.repetitions = repetitions
+        self.line_num = line_num
+
+    def get_bar_definitions(self):
+        return [ bar for c in self.content for bar in c.get_bar_definitions() ]
+
+    def get_bar_executions(self):
+        return [ bar for c in self.content for bar in c.get_bar_executions() ] * self.repetitions
+
+class Note(object):
+    def __init__(self, tone, octave, figure, line_num):
+        if octave < 1 or octave > 9:
+            raise SemanticException("Octava fuera del rango [1, 9]. Linea {0}.".format(line_num))
+        
+        self.tone = tone
+        self.octave = octave
+        self.figure = figure
+        self.line_num = line_num
+
+    def relative_length(self):
+        return self.figure.relative_length()
+
+    def american_tone_with_octave(self):
+        return american[self.tone] + str(self.octave)
+
+class Silence(object):
+    def __init__(self, figure, line_num):        
+        self.figure = figure
+        self.line_num = line_num
+
+    def relative_length(self):
+        return self.figure.relative_length()
+
+class Figure(object):
+    def __init__(self, name, line_num):     
+        self.dotted = name.endswith('.')
+        self.name = name.rstrip('.')
+        self.value = figures[self.name]
+        self.line_num = line_num
+
+    def relative_length(self):        
+        return (1. / self.value) + (1. / (self.value * 2) if self.dotted else 0)
+        
+    def clicks(self, clicks_per_beat, beat_length):
+        return ((clicks_per_beat * beat_length) / self.value) + ((clicks_per_beat * beat_length) / (self.value * 2) if self.dotted else 0)
+\end{verbatim}
+\subsection{translation.py}
+\begin{verbatim}
+from expressions import *
+constants = None
+
+def generate_output(song, output_file):
+    ntracks = len(song.voices) + 1
+    clicks_per_beat = 384
+    midi_bar = "{0}/{1}".format(song.time_signature.beats_per_bar, song.time_signature.beat_length)
+    midi_tempo = 1000000 * 60 * song.tempo.figure.value / (4 * song.tempo.per_minute)
+    
+    output_file.write('MFile 1 %d %d\n' % (ntracks, clicks_per_beat))
+    output_file.write('MTrk\n' % ())
+    output_file.write('000:00:000 Tempo %d\n' % (midi_tempo))
+    output_file.write('000:00:000 TimeSig %s 24 8\n' % (midi_bar))    
+    output_file.write('000:00:000 Meta TrkEnd\n' % ())
+    output_file.write('TrkEnd\n' % ())
+    
+    i = 1
+    for voice in song.voices:
+        generate_track(voice, i, song.time_signature, clicks_per_beat, output_file)
+        i = i + 1
+
+def generate_track(voice, voice_number, time_signature, clicks_per_beat, output_file):
+    output_file.write('MTrk\n' % ())
+    output_file.write('000:00:000 Meta TrkName "Voz %d"\n' % (voice_number))
+    output_file.write('000:00:000 ProgCh ch=%d prog=%d\n' % (voice_number, voice.instrument))
+    
+    bar_num = 0
+    beat_num = 0
+    click_num = 0
+
+    for bar in voice.get_bar_executions():
+        for action in bar.content:
+            
+            if type(action) is Note:
+                output_file.write('%03d:%02d:%03d On  ch=%d note=%s vol=70\n' % (bar_num, beat_num, click_num, voice_number, action.american_tone_with_octave().ljust(3)))
+                temp_click = click_num + action.figure.clicks(clicks_per_beat, time_signature.beat_length)
+                click_num = temp_click % clicks_per_beat
+                
+                temp_beat = beat_num + (temp_click / clicks_per_beat)
+                beat_num =  temp_beat % time_signature.beats_per_bar
+                
+                bar_num = bar_num + (temp_beat / time_signature.beats_per_bar)
+                output_file.write('%03d:%02d:%03d Off ch=%d note=%s vol=0\n' % (bar_num, beat_num, click_num, voice_number, action.american_tone_with_octave().ljust(3)))
+            else:
+                temp_click = click_num + action.figure.clicks(clicks_per_beat, time_signature.beat_length)
+                click_num = temp_click % clicks_per_beat                
+                temp_beat = beat_num + (temp_click / clicks_per_beat)
+                beat_num =  temp_beat % time_signature.beats_per_bar                
+                bar_num = bar_num + (temp_beat / time_signature.beats_per_bar)
+    
+    output_file.write('%03d:%02d:%03d Meta TrkEnd\n' % (bar_num, beat_num, click_num))
+    output_file.write('TrkEnd\n' % ())
+
+\end{verbatim}
+\subsection{parser\_exceptions.py}
+\begin{verbatim}
+class SyntacticException(Exception):    
+    pass
+
+class SemanticException(Exception):
+    pass
+\end{verbatim}
+\subsection{musileng.py}
+\begin{verbatim}
+import lexer_rules
+import parser_rules
+import parser_exceptions
+from translation import generate_output
+
+from sys import argv, exit, stdout
+from ply.lex import lex
+from ply.yacc import yacc
+
+if __name__ == "__main__":
+    if len(argv) != 2 and len(argv) != 3:
+        print "Parametros invalidos."
+        print "Uso:"
+        print "  parser.py archivo_entrada [archivo_salida]"
+        exit()
+
+    input_file = open(argv[1], "r")
+    text = input_file.read()
+    input_file.close()
+
+    lexer = lex(module=lexer_rules)
+    parser = yacc(debug=0,module=parser_rules)
+        
+    try:
+        song = parser.parse(text, lexer)
+        if (len(argv) == 3):
+            output_file = open(argv[2], "w")
+            generate_output(song, output_file)
+            output_file.close()
+        else:
+            generate_output(song, stdout)
+    except parser_exceptions.SemanticException as exception:
+        print "Error de validacion: " + str(exception)
+    except parser_exceptions.SyntacticException as exception:
+        print "Error de sintaxis: " + str(exception)
+\end{verbatim}
 
 \end{document}
