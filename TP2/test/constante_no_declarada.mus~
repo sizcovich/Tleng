@@ -1,0 +1,24 @@
+#tempo negra 190
+#compas 12/8
+const grand_piano = 0;
+
+voz (grand_piano)
+{
+    repetir (8)
+    {
+        compas
+        {
+            silencio(redonda.);
+        }
+    }
+    repetir(2)
+    {
+    compas
+    {
+        nota(re, octava_mas_alta, redonda);
+        silencio(negra.);
+        nota(do, octava_mas_alta, corchea);
+    }
+   
+}
+

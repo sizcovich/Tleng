@@ -1,0 +1,18 @@
+
+const grand_piano = 0;
+
+// Melodia principal
+voz (grand_piano)
+{
+    repetir (8)
+    {
+        
+    }
+
+	compas
+        {
+            silencio(redonda.);
+        }
+    
+}
+

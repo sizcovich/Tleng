@@ -1,0 +1,161 @@
+// 60 redondas por minuto, osea cada redonda dura 1 seg.
+#tempo redonda 60
+// compas de 2 tiempos y cada tiempo dura 1/2 redonda (1 blanca).
+// entonces cada compas puede tener 1 redonda, 2 blancas, 4 negras, etc.
+#compas 2/2
+
+const octava = 5;
+
+
+voz (0)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
+
+voz (1)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
+
+voz (2)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
+
+voz (3)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
+
+voz (4)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
+
+voz (5)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
+
+voz (6)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
+
+voz (7)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
+
+voz (8)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
+
+voz (9)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
+
+voz (10)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
+
+voz (11)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
+
+voz (12)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
+
+voz (13)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
+
+voz (14)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
+
+voz (15)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
+
+voz (16)
+{
+    compas
+    {
+        nota(do, octava, blanca);
+        nota(re, octava, blanca);
+    }
+}
