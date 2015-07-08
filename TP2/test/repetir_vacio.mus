@@ -6,14 +6,12 @@ const grand_piano = 0;
 voz (grand_piano)
 {
     repetir (8)
-    {
-        
+    {        
     }
 
 	compas
-        {
-            silencio(redonda.);
-        }
-    
+    {
+        silencio(redonda.);
+    }    
 }
 

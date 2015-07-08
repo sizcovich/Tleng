@@ -81,6 +81,9 @@ class Repeat(object):
         if repetitions < 2:
             raise SemanticException("Cantidad de repeticiones debe ser al menos 2. Linea: {0}.".format(line_num))
 
+        if len(content) == 0:
+            raise SemanticException("Declaracion de repetir con cuerpo vacio. Linea: {0}.".format(line_num))
+        
         self.content = content
         self.repetitions = repetitions
         self.line_num = line_num
